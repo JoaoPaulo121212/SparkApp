@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI // Importe PhotosUI
+
 struct DiaSequencia: Identifiable {
     let id = UUID()
     var letra: String
@@ -7,10 +9,12 @@ struct DiaSequencia: Identifiable {
 }
 
 struct TelaPerfil: View {
-    @State private var nomeUsuario: String = "Jota Pe"
-    @State private var idade: Int = 19
-    @State private var alturaCm: Int = 190
-    @State private var pesoKg: Double = 88.8
+    // Recupera os dados do usuário armazenados usando @AppStorage
+    @AppStorage("nomeUsuario") var nomeUsuario: String = ""
+    @AppStorage("idadeUsuario") var idade: Int = 0
+    @AppStorage("alturaUsuario") var alturaCm: Int = 0
+    @AppStorage("pesoUsuario") var pesoKg: Double = 0.0
+
     @State private var sequenciaDias: [DiaSequencia] = [
         DiaSequencia(letra: "Q"),
         DiaSequencia(letra: "Q"),
@@ -22,6 +26,9 @@ struct TelaPerfil: View {
     let corTextoSecundario = Color.gray
     let corDestaque = Color(red: 233/255, green: 9/255, blue: 22/255)
     let corCardResumo = Color("ColorCard")
+
+    @State private var selectedItem: PhotosPickerItem?
+    @State private var profileImage: Image?
 
     var body: some View {
         ZStack {
@@ -42,13 +49,36 @@ struct TelaPerfil: View {
                     .padding(.horizontal)
                     .padding(.top)
                     HStack(spacing: 20) {
-                        Image(systemName: "person.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .foregroundColor(corTextoSecundario)
-                            .background(Color.gray.opacity(0.3))
-                            .clipShape(Circle())
+                        PhotosPicker(
+                            selection: $selectedItem,
+                            matching: .images,
+                            photoLibrary: .shared()
+                        ) {
+                            if let profileImage = profileImage {
+                                profileImage
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(corTextoSecundario)
+                                    .background(Color.gray.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
+                        }
+                        .onChange(of: selectedItem) { _, newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    if let uiImage = UIImage(data: data) {
+                                        profileImage = Image(uiImage: uiImage)
+                                    }
+                                }
+                            }
+                        }
 
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
@@ -69,8 +99,10 @@ struct TelaPerfil: View {
                             Text("\(idade) anos")
                                 .font(.subheadline)
                                 .foregroundColor(corTextoSecundario)
-                            Text("\(String(format: "%.2f", Double(alturaCm)/100.0))m de altura")
-                            Text("\(String(format: "%.1f", pesoKg))kgs")
+                            Text("\(String(format: "%.2f", Double(alturaCm)/100.0)) m")
+                                .font(.subheadline)
+                                .foregroundColor(corTextoSecundario)
+                            Text("\(String(format: "%.1f", pesoKg)) kgs")
                                 .font(.subheadline)
                                 .foregroundColor(corTextoSecundario)
                         }
@@ -109,7 +141,7 @@ struct TelaPerfil: View {
                         .frame(height: 200)
                         .padding(.horizontal)
                     }
-                    
+
                     Spacer()
                 }
             }
@@ -121,14 +153,14 @@ struct DiaView: View {
     let dia: DiaSequencia
     let corDestaque: Color
     let corTextoPrincipal: Color
-    
+
     var body: some View {
         VStack(spacing: 4) {
             Text(dia.letra)
                 .font(.title3)
                 .fontWeight(.bold)
                 .foregroundColor(dia.estaDestacado ? corDestaque : corTextoPrincipal)
-            
+
             if let treinoInfo = dia.treinoInfo, dia.estaDestacado {
                 Text(treinoInfo)
                     .font(.caption)

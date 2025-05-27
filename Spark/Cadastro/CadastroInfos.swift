@@ -9,6 +9,11 @@ struct CadastroInfos: View {
     @State private var deveNavegar = false
     @AppStorage("cadastroConcluido") var cadastroConcluido = false
 
+    // Add @AppStorage for each piece of user data
+    @AppStorage("nomeUsuario") var storedNomeUsuario: String = ""
+    @AppStorage("idadeUsuario") var storedIdadeUsuario: Int = 0
+    @AppStorage("pesoUsuario") var storedPesoUsuario: Double = 0.0
+    @AppStorage("alturaUsuario") var storedAlturaUsuario: Int = 0 // Storing height in cm as Int
 
     var idade: Int? {
         Int(idadeTexto)
@@ -18,7 +23,7 @@ struct CadastroInfos: View {
         Double(pesoTexto.replacingOccurrences(of: ",", with: "."))
     }
 
-    var altura: Double? {
+    var altura: Double? { // Keep as Double? since input can be decimal
         Double(alturaTexto.replacingOccurrences(of: ",", with: "."))
     }
 
@@ -42,13 +47,20 @@ struct CadastroInfos: View {
                     ProgressBarCadastro(currentTela: 2)
 
                 }
-                .padding()
+                .padding(.horizontal)
                 ScrollView {
                     CamposCadastroView(nome: $nome, idadeTexto: $idadeTexto, pesoTexto: $pesoTexto, alturaTexto: $alturaTexto)
                     Spacer()
                     BotaoConcluirCadastro(podeConcluir: podeConcluir) {
                         if idade == nil || peso == nil || (!alturaTexto.isEmpty && altura == nil) {
                         } else {
+                            // Store the data when "Concluir" is pressed
+                            storedNomeUsuario = nome
+                            storedIdadeUsuario = idade ?? 0
+                            storedPesoUsuario = peso ?? 0.0
+                            // Convert altura (Double?) to Int for storedAlturaUsuario (Int)
+                            storedAlturaUsuario = Int(altura ?? 0.0)
+
                             print("Cadastro Concluído!")
                             print("Nome: \(nome)")
                             print("Idade: \(idade ?? -1)")
@@ -68,17 +80,17 @@ struct CadastroInfos: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .onChange(of: idadeTexto) { newValue in
-            if newValue.count > 3 {
-                idadeTexto = String(newValue.prefix(3))
+        .onChange(of: idadeTexto) {_, newValue in
+            if newValue.count > 2 {
+                idadeTexto = String(newValue.prefix(2))
             }
         }
-        .onChange(of: pesoTexto) { newValue in
+        .onChange(of: pesoTexto) {_, newValue in
             if newValue.count > 4 {
-                pesoTexto = String(newValue.prefix(3))
+                pesoTexto = String(newValue.prefix(4))
             }
         }
-        .onChange(of: alturaTexto) { newValue in
+        .onChange(of: alturaTexto) {_, newValue in
             if newValue.count > 4 {
                 alturaTexto = String(newValue.prefix(4))
             }
@@ -87,8 +99,6 @@ struct CadastroInfos: View {
 }
 
 struct TopBarCadastro: View {
-//    var dismiss: DismissAction
-    
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -116,11 +126,14 @@ struct CamposCadastroView: View {
 
     var body: some View {
         VStack {
+            Spacer()
             CampoCadastro(label: "Nome:", placeholder: "Ex: João da Silva", texto: $nome)
-            CampoCadastro(label: "Idade:", placeholder: "Ex: 25", texto: $idadeTexto, keyboard: .numberPad)
-            CampoCadastro(label: "Peso (em Kg):", placeholder: "Ex: 70,0", texto: $pesoTexto, keyboard: .decimalPad)
-            CampoCadastro(label: "Altura (em metros):", placeholder: "Ex: 1,70 (Opcional)", texto: $alturaTexto, keyboard: .decimalPad)
+            CampoCadastro(label: "Idade:", placeholder: "Ex: 25 anos", texto: $idadeTexto, keyboard: .numberPad)
+            CampoCadastro(label: "Peso (em Kg):", placeholder: "Ex: 70,0 Kg", texto: $pesoTexto, keyboard: .decimalPad)
+            CampoCadastro(label: "Altura (em cm):", placeholder: "Ex: 170 (Opcional)", texto: $alturaTexto, keyboard: .decimalPad)
         }
+        .padding(.top)
+        
     }
 }
 
@@ -137,10 +150,10 @@ struct BotaoConcluirCadastro: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     podeConcluir
-                    ? Color(red: 233/255, green: 9/255, blue: 22/255)
+                    ? Color("CorBotao")
                     : Color(red: 41/255, green: 38/255, blue: 35/255)
                 )
-                .cornerRadius(25)
+                .cornerRadius(12)
         }
         .disabled(!podeConcluir)
         

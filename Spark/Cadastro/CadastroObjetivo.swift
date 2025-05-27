@@ -50,7 +50,7 @@ struct CadastroObjetivo: View {
                                 .frame(maxWidth: .infinity)
                                 .background(
                                     objetivoSelecionado == opcao
-                                    ? Color(red: 233/255, green: 9/255, blue: 22/255)
+                                    ? Color("CorBotao")
                                     : Color(red: 41/255, green: 38/255, blue: 35/255)
                                 )
                                 .cornerRadius(12)

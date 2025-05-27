@@ -11,7 +11,9 @@ struct TempoCadastro: View {
                     .edgesIgnoringSafeArea(.all)
                 VStack{
                     ProgressBarCadastro(currentTela: 1)
+                        .padding()
                     Spacer()
+                        
                 }
                 
                 VStack(spacing: 30) {
@@ -37,7 +39,7 @@ struct TempoCadastro: View {
                                     .padding()
                                     .background(
                                         tempoSelecionado == opcao
-                                        ? Color(red: 233/255, green: 9/255, blue: 22/255)
+                                        ? Color("CorBotao")
                                         : Color(red: 41/255, green: 38/255, blue: 35/255)
                                     )
                                     .cornerRadius(12)
@@ -61,7 +63,7 @@ struct TempoCadastro: View {
                             .frame(maxWidth: .infinity)
                             .background(
                                 tempoSelecionado.isEmpty
-                                ? Color.gray
+                                ? Color(red: 41/255, green: 38/255, blue: 35/255)
                                 : Color(red: 233/255, green: 9/255, blue: 22/255)
                             )
                             .cornerRadius(12)
