@@ -62,14 +62,13 @@ struct AddModel: View {
                                         .bold()
                                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        print("Botão de templates pressionado")
-                    }) {
+                    NavigationLink(destination: TreinosTemplates()){
                         Image(systemName: "list.bullet.clipboard")
                             .foregroundColor(.white)
                     }
 
                     Button(action: {
+                        Alert(title: Text("Nessa tela você pode criar sessões de treino à vontade, ou se preferir pode escolher um template já criado!"))
                         print("Botão de infos pressionado")
                     }) {
                         Image(systemName: "info.circle")

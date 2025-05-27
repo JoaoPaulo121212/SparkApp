@@ -87,8 +87,6 @@ struct CadastroInfos: View {
 }
 
 struct TopBarCadastro: View {
-//    var dismiss: DismissAction
-    
     @Environment(\.dismiss) var dismiss
 
     var body: some View {

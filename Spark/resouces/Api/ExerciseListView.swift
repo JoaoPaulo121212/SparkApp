@@ -36,7 +36,7 @@ struct ExerciseListView: View {
                 .padding(.bottom, 15)
                 
                 if viewModel.isLoading && filteredExercises.isEmpty {
-                    ProgressView("Carregando Bat-Exercícios...")
+                    ProgressView("Carregando exercícios...")
                         .padding()
                         .frame(maxHeight: .infinity)
                 } else if !filteredExercises.isEmpty {
@@ -96,7 +96,7 @@ struct ExerciseListView: View {
                     Button {
                         Task {
                             searchText = ""
-                            await viewModel.loadAllExerciseDetails(limit: 872)
+                            await viewModel.loadAllExerciseDetails(limit: 200)
                         }
                     } label: {
                         Image(systemName: "arrow.clockwise.circle")
@@ -107,7 +107,7 @@ struct ExerciseListView: View {
             }
             .task {
                 if viewModel.exerciciosDetalhados.isEmpty {
-                    await viewModel.loadAllExerciseDetails(limit: 872)
+                    await viewModel.loadAllExerciseDetails(limit: 200)
                 }
             }
             .alert("Erro", isPresented: Binding(
