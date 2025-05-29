@@ -19,4 +19,6 @@ struct SparkApp: App {
 #Preview {
     WelcomeView()
         .preferredColorScheme(.dark)
+        .environmentObject(GerenciadorSessoesViewModel())
+        .environmentObject(ExerciseViewModel())
 }
