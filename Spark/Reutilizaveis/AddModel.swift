@@ -93,4 +93,5 @@ extension View {
 }
 #Preview {
     AddModel()
+        .preferredColorScheme(.dark)
 }

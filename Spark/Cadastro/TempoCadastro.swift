@@ -71,9 +71,9 @@ struct TempoCadastro: View {
                     .disabled(tempoSelecionado.isEmpty)
                     .padding(.horizontal)
                     .padding(.bottom, 20)
-                    NavigationLink(destination: CadastroObjetivo(), isActive: $deveNavegar) {
-                        EmptyView()
-                }
+                    .navigationDestination(isPresented: $deveNavegar) {
+                                    CadastroObjetivo()
+                                }
             }
             .padding(.top)
         }

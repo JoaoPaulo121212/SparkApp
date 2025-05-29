@@ -16,4 +16,5 @@ struct SparkApp: App {
 }
 #Preview {
     WelcomeView()
+        .preferredColorScheme(.dark)
 }

@@ -3,6 +3,8 @@ struct CadastroObjetivo: View {
     @Environment(\.dismiss) var dismiss
     @State private var objetivoSelecionado: String = ""
     @State private var deveNavegar = false
+    @AppStorage("objetivoSelecionado") private var objetivoSalvo: String = ""
+
     let opcoesObjetivo = ["Emagrecimento","Ganho de massa muscular"]
     var body: some View {
             ZStack {
@@ -62,6 +64,7 @@ struct CadastroObjetivo: View {
                     Spacer()
                     Button(action: {
                         if !objetivoSelecionado.isEmpty {
+                            objetivoSalvo = objetivoSelecionado
                             print("Selecionado: \(objetivoSelecionado)")
                             deveNavegar = true
                         }
@@ -81,9 +84,9 @@ struct CadastroObjetivo: View {
                     .disabled(objetivoSelecionado.isEmpty)
                     .padding(.horizontal)
                     .padding(.bottom)
-                    NavigationLink(destination: CadastroInfos(), isActive: $deveNavegar){
-                        EmptyView()
-                    }
+                    .navigationDestination(isPresented: $deveNavegar) {
+                                    CadastroInfos()
+                                }
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -92,4 +95,5 @@ struct CadastroObjetivo: View {
 
 #Preview {
     CadastroObjetivo()
+        .preferredColorScheme(.dark)
 }
