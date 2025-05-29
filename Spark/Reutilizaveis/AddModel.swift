@@ -405,7 +405,15 @@ struct SerieRowView: View {
         .padding(.vertical, 2)
     }
 }
-
+struct CabecalhoSerieStyle: ViewModifier {
+    var alignment: Alignment = .leading
+    func body(content: Content) -> some View {
+        content
+            .font(.caption.weight(.semibold))
+            .foregroundColor(.gray)
+            .frame(maxWidth: .infinity, alignment: alignment)
+    }
+}
 struct TextFieldEditorSerieStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
