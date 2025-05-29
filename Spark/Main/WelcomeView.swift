@@ -13,7 +13,7 @@ struct WelcomeView: View {
                         .scaledToFit()
                         .frame(width: 250, height: 250)
                     Text("Treine inteligente \nTreine com o Spark!")
-                        .offset(y: -30)
+                        .padding(.bottom)
                         .font(.title2)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
