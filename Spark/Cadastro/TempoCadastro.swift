@@ -40,7 +40,7 @@ struct TempoCadastro: View {
                                     .background(
                                         tempoSelecionado == opcao
                                         ? Color("CorBotao")
-                                        : Color(red: 41/255, green: 38/255, blue: 35/255)
+                                        : Color("ColorCard")
                                     )
                                     .cornerRadius(12)
                             }
@@ -63,8 +63,8 @@ struct TempoCadastro: View {
                             .frame(maxWidth: .infinity)
                             .background(
                                 tempoSelecionado.isEmpty
-                                ? Color(red: 41/255, green: 38/255, blue: 35/255)
-                                : Color(red: 233/255, green: 9/255, blue: 22/255)
+                                ? Color("ColorCard")
+                                : Color("CorOk")
                             )
                             .cornerRadius(12)
                     }
@@ -82,4 +82,5 @@ struct TempoCadastro: View {
 }
 #Preview {
     TempoCadastro()
+        .preferredColorScheme(.dark)
 }

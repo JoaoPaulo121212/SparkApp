@@ -25,8 +25,6 @@ struct TreinoAView: View {
             Color("BackgroundColor")
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 20) {
-//                "Ganho de massa muscular": [
-//                    ["Supino reto Máquina","Supino inclinado máquina", "Cruxifico máquina", "Elevação frontal", "⁠Elevação lateral" , "Trícepes corda na polia", "Tríceps testa na polia barra W"]
                 
                 Button("Concluir Treino") {
                     concluirTreino()

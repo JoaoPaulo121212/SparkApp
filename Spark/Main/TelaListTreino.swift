@@ -75,10 +75,9 @@ struct TelaListTreino: View {
                 AddModel()
             }
             
-            NavigationLink(destination: AdicionarSessao(), isActive: $deveAdicionarTreino) {
-                EmptyView()
+            .navigationDestination(isPresented: $deveAdicionarTreino) {
+                AdicionarSessao()
             }
-            .hidden()
         }
         .navigationBarBackButtonHidden(true)
     }

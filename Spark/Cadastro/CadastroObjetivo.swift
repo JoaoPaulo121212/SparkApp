@@ -18,7 +18,7 @@ struct CadastroObjetivo: View {
                         }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(Color(red: 233/255, green: 9/255, blue: 22/255))
-                                .font(.system(size: 28, weight: .bold))
+                                .font(.system(size: 23, weight: .bold))
                         }
                         ProgressBarCadastro(currentTela: 2)
 
@@ -29,7 +29,9 @@ struct CadastroObjetivo: View {
                         .font(.system(size: 27, weight: .bold))
                         .foregroundColor(.white)
                         .padding(.horizontal)
-                        .offset(x: -60, y: 20)
+                        .padding(.leading, -80)    // ou algum valor pequeno
+                        .padding(.trailing, 60)  // "empurra" o conteúdo para a esquerda
+                        .padding(.top, 30)       // move para baixo
                     Spacer()
                     VStack(spacing: 16) {
                         ForEach(opcoesObjetivo, id: \.self) { opcao in
@@ -53,7 +55,7 @@ struct CadastroObjetivo: View {
                                 .background(
                                     objetivoSelecionado == opcao
                                     ? Color("CorBotao")
-                                    : Color(red: 41/255, green: 38/255, blue: 35/255)
+                                    : Color("ColorCard")
                                 )
                                 .cornerRadius(12)
                             }
@@ -76,8 +78,8 @@ struct CadastroObjetivo: View {
                             .frame(maxWidth: .infinity)
                             .background(
                                 objetivoSelecionado.isEmpty
-                                ? Color(red: 41/255, green: 38/255, blue: 35/255)
-                                : Color(red: 233/255, green: 9/255, blue: 22/255)
+                                ? Color("ColorCard")
+                                : Color("CorOk")
                             )
                             .cornerRadius(12)
                     }
