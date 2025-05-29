@@ -180,5 +180,5 @@ struct DiaView: View {
 
 #Preview {
     TelaPerfil()
-        .preferredColorScheme(.dark) // Adicionado para melhor visualização no tema escuro
+        .preferredColorScheme(.dark)
 }

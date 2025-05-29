@@ -72,9 +72,9 @@ struct CadastroInfos: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
-                    NavigationLink(destination: TabViewTeste(), isActive: $deveNavegar) {
-                        EmptyView()
-                    }
+                    .navigationDestination(isPresented: $deveNavegar) {
+                                    TabViewTeste()
+                                }
                 }
                 .padding(.horizontal)
             }
