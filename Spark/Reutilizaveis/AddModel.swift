@@ -1,3 +1,4 @@
+// Arquivo: AddModel.swift
 import SwiftUI
 
 struct AddModel: View {
@@ -8,20 +9,25 @@ struct AddModel: View {
     @State private var nomeSessaoAtual: String = ""
     @State private var exerciciosSessaoAtual: [ExercicioNaSessao] = []
 
+    let textFieldPrincipalBackgroundColor = Color.gray.opacity(0.25)
     let placeholderColor = Color.gray.opacity(0.6)
     let corBotaoPrincipal = Color("CorBotao")
-
+    let corTextoPrincipal = Color.white
+    let corTextoSecundario = Color.gray
+    
     @State private var showAlertInfo = false
     @State private var showFeedbackAlert = false
     @State private var feedbackAlertMessage = ""
     @State private var feedbackAlertTitle = "Aviso"
 
     @State private var modoCriacaoEdicaoAtivo: Bool = false
+    @State private var nomeSessaoEditadoPeloUsuario: Bool = false
 
     var body: some View {
         NavigationView {
             ZStack {
                 Color("BackgroundColor").edgesIgnoringSafeArea(.all)
+
                 VStack(spacing: 0) {
                     if modoCriacaoEdicaoAtivo {
                         editorDeSessaoView()
@@ -39,27 +45,31 @@ struct AddModel: View {
                         }
                     } else {
                         Button(action: { dismiss() }) {
-                            Image(systemName: "chevron.left").foregroundColor(.white).imageScale(.medium)
+                            Image(systemName: "chevron.left").foregroundColor(corTextoPrincipal).imageScale(.medium)
                         }
                     }
                 }
                 ToolbarItem(placement: .principal) {
-                    Text(modoCriacaoEdicaoAtivo ? (idSessaoEditando == nil ? "Nova Sessão" : "Editar Sessão") : "Minhas Sessões")
-                        .font(.headline).bold().foregroundColor(.white)
+                    Text(tituloDaToolbar())
+                        .font(.headline).bold().foregroundColor(corTextoPrincipal)
                 }
+
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if modoCriacaoEdicaoAtivo {
                         Button(idSessaoEditando == nil ? "Salvar" : "Atualizar") {
                             salvarSessaoAtual()
                         }
                         .foregroundColor(corBotaoPrincipal)
-                        .disabled(nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || exerciciosSessaoAtual.isEmpty)
+                        .disabled(
+                            (nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && (idSessaoEditando != nil || nomeSessaoEditadoPeloUsuario))
+                            || exerciciosSessaoAtual.isEmpty
+                        )
                     } else {
-                        NavigationLink(destination: TreinosTemplatesView()) { 
-                            Image(systemName: "list.bullet.clipboard").foregroundColor(.white)
+                        NavigationLink(destination: TreinosTemplatesView()) {
+                            Image(systemName: "list.bullet.clipboard").foregroundColor(corTextoPrincipal)
                         }
                         Button(action: { showAlertInfo.toggle() }) {
-                            Image(systemName: "info.circle").foregroundColor(.white)
+                            Image(systemName: "info.circle").foregroundColor(corTextoPrincipal)
                         }
                         Button(action: {
                             if gerenciadorSessoes.podeCriarNovaSessao {
@@ -73,36 +83,43 @@ struct AddModel: View {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundColor(corBotaoPrincipal).imageScale(.large)
                         }
-                        .disabled(!gerenciadorSessoes.podeCriarNovaSessao && exerciciosSessaoAtual.isEmpty && idSessaoEditando == nil)
+                        .disabled(!gerenciadorSessoes.podeCriarNovaSessao)
                     }
                 }
             }
-            .alert(feedbackAlertTitle, isPresented: $showFeedbackAlert) { Button("OK"){} } message: { Text(feedbackAlertMessage) }
-            .alert("Informação", isPresented: $showAlertInfo) { Text("Entendido") } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela. Ao clicar no ícone de lista, você pode acessar as suas sessões já criadas!") }
+            .alert(feedbackAlertTitle, isPresented: $showFeedbackAlert) { Button("OK"){} } message: {
+                Text(feedbackAlertMessage) }
+            .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: {}) } message: {
+                Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela. Ao clicar no ícone de lista, você pode acessar as suas sessões já criadas") }
         }
         .accentColor(corBotaoPrincipal)
     }
     @ViewBuilder
     private func editorDeSessaoView() -> some View {
-        VStack(spacing: 15) {
-            let placeholderNomeSessao = gerarNomeSessaoPlaceholder()
-            TextField("", text: $nomeSessaoAtual,
-                      prompt: Text(nomeSessaoAtual.isEmpty && idSessaoEditando == nil ? placeholderNomeSessao : "Nome da sessão")
-                                .foregroundColor(placeholderColor)
+        VStack(spacing: 12) {
+            TextField(
+                "",
+                text: Binding(
+                    get: { self.nomeSessaoAtual },
+                    set: { newValue in
+                        self.nomeSessaoAtual = newValue
+                        self.nomeSessaoEditadoPeloUsuario = true
+                    }
+                ),
+                prompt: Text(textoPlaceholderNomeSessao()).foregroundColor(placeholderColor)
             )
-            .foregroundColor(.white)
+            .foregroundColor(corTextoPrincipal)
             .padding()
-            .background(Color.gray.opacity(0.25))
+            .background(textFieldPrincipalBackgroundColor)
             .cornerRadius(10)
             .padding(.horizontal)
-            .padding(.top, 20)
-            .onTapGesture {
-                if nomeSessaoAtual == placeholderNomeSessao && idSessaoEditando == nil {
-                    nomeSessaoAtual = ""
+            .padding(.top, 15)
+            .onAppear {
+                if idSessaoEditando == nil && !nomeSessaoEditadoPeloUsuario {
                 }
             }
             if !exerciciosSessaoAtual.isEmpty {
-                HStack { // Cabeçalhos para as séries
+                HStack {
                     Text("SÉRIE").modifier(CabecalhoSerieStyle())
                     Text("PESO").modifier(CabecalhoSerieStyle(alignment: .center))
                     Text("REPS").modifier(CabecalhoSerieStyle(alignment: .center))
@@ -110,15 +127,17 @@ struct AddModel: View {
                     Spacer().frame(width: 30)
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 5)
+                .padding(.top, 10)
+                .padding(.bottom, -2)
             }
-            
             List {
                 ForEach($exerciciosSessaoAtual) { $itemSessao in
                     Section(header:
                         Text(itemSessao.exercicioBase.nome)
-                            .font(.title3).bold().foregroundColor(corBotaoPrincipal)
-                            .padding(.vertical, 6).frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.title3).bold()
+                            .foregroundColor(corBotaoPrincipal)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .textCase(nil)
                     ) {
                         ForEach($itemSessao.series) { $serieDetalhe in
@@ -136,8 +155,9 @@ struct AddModel: View {
                                 .font(.caption.bold()).foregroundColor(corBotaoPrincipal)
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                     }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10))
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                 }
@@ -152,42 +172,49 @@ struct AddModel: View {
                     adicionarExercicioASessao(exercicioLocal: exercicioLocalSelecionado)
                 }
             )) {
-                Label("Adicionar Exercício", systemImage: "plus.rectangle.on.rectangle")
+                Label("Adicionar Exercício", systemImage: "plus.rectangle.on.rectangle.fill")
                     .font(.headline).foregroundColor(.white).padding()
                     .frame(maxWidth: .infinity)
-                    .background(corBotaoPrincipal.opacity(0.9)).cornerRadius(12)
-            }.padding([.horizontal, .bottom])
+                    .background(corBotaoPrincipal.opacity(0.85)).cornerRadius(12)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 25)
         }
     }
+
     @ViewBuilder
     private func listaDeSessoesView() -> some View {
-        VStack {
+         VStack {
             if gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty && !gerenciadorSessoes.podeCriarNovaSessao {
                 Spacer()
-                Text("Limite de sessões atingido e nenhuma sessão salva.")
+                Text("Limite de sessões atingido.\nNenhuma sessão salva para exibir.")
                     .font(.headline).foregroundColor(.orange).multilineTextAlignment(.center).padding()
                 Spacer()
             } else if gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty {
                 Spacer()
                 Image(systemName: "figure.strengthtraining.traditional")
-                     .font(.system(size: 80)).foregroundColor(.white.opacity(0.3)).padding(.bottom)
-                Text("Nenhuma sessão de treino.").font(.title2).foregroundColor(.gray)
+                     .font(.system(size: 70)).foregroundColor(corTextoPrincipal.opacity(0.3)).padding(.bottom)
+                Text("Nenhuma sessão de treino.")
+                    .font(.title3)
+                    .foregroundColor(corTextoSecundario)
+                
                 Spacer()
             } else {
                 Text("Minhas Sessões (\(gerenciadorSessoes.sessoesDeTreinoSalvas.count)/\(gerenciadorSessoes.limiteMaximoSessoes))")
-                    .font(.callout).foregroundColor(.gray).padding(.top)
+                    .font(.callout).foregroundColor(corTextoSecundario).padding(.top)
                 List {
                     ForEach(gerenciadorSessoes.sessoesDeTreinoSalvas) { sessao in
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(sessao.nomeSessao).font(.headline).foregroundColor(.white)
+                                Text(sessao.nomeSessao).font(.headline).foregroundColor(corTextoPrincipal)
                                 Text("\(sessao.exercicios.count) exercícios • Criada em: \(formatarData(sessao.dataCriacao))")
-                                    .font(.caption).foregroundColor(.gray)
+                                    .font(.caption).foregroundColor(corTextoSecundario)
                             }
                             Spacer()
                             Image(systemName: "square.and.pencil").foregroundColor(corBotaoPrincipal)
                         }
-                        .padding(.vertical, 4).contentShape(Rectangle())
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
                         .onTapGesture { carregarSessaoParaEdicao(sessao: sessao) }
                         .listRowBackground(Color.gray.opacity(0.15))
                     }
@@ -196,14 +223,15 @@ struct AddModel: View {
                 .listStyle(.insetGrouped)
                 .background(Color("BackgroundColor")).scrollContentBackground(.hidden)
             }
-        }.padding(.top)
+        }
+        .padding(.top)
     }
-    // MARK: - Funções de Lógica
     func prepararNovaSessao() {
         idSessaoEditando = nil
-        nomeSessaoAtual = gerarNomeSessaoPlaceholder()
+        nomeSessaoAtual = gerarNomeSessaoPlaceholderCalculado()
         exerciciosSessaoAtual = []
         modoCriacaoEdicaoAtivo = true
+        nomeSessaoEditadoPeloUsuario = false
     }
 
     func carregarSessaoParaEdicao(sessao: SessaoDeTreino) {
@@ -211,6 +239,7 @@ struct AddModel: View {
         nomeSessaoAtual = sessao.nomeSessao
         exerciciosSessaoAtual = sessao.exercicios
         modoCriacaoEdicaoAtivo = true
+        nomeSessaoEditadoPeloUsuario = true
     }
     
     func cancelarEdicaoOuCriacao() {
@@ -220,21 +249,36 @@ struct AddModel: View {
             exerciciosSessaoAtual = []
         }
         idSessaoEditando = nil
+        nomeSessaoEditadoPeloUsuario = false
     }
 
     func salvarSessaoAtual() {
-        let nomeTrimmed = nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines)
-        if nomeTrimmed.isEmpty || nomeTrimmed == gerarNomeSessaoPlaceholder() && idSessaoEditando == nil {
-            feedbackAlertTitle = "Nome Inválido"; feedbackAlertMessage = "Por favor, dê um nome para a sua sessão."; showFeedbackAlert = true; return
+        var nomeFinalParaSalvar = nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines)
+        let placeholderCalculadoAoSalvar = gerarNomeSessaoPlaceholderCalculado(considerandoSessaoAtualComoPotencialmenteNova: idSessaoEditando == nil)
+
+        if idSessaoEditando == nil { // Nova sessão
+            if nomeFinalParaSalvar.isEmpty && !nomeSessaoEditadoPeloUsuario {
+                nomeFinalParaSalvar = placeholderCalculadoAoSalvar
+            } else if nomeFinalParaSalvar.isEmpty && nomeSessaoEditadoPeloUsuario {
+                feedbackAlertTitle = "Nome Inválido"; feedbackAlertMessage = "Por favor, dê um nome para a sua sessão."; showFeedbackAlert = true; return
+            }
+        } else {
+             if nomeFinalParaSalvar.isEmpty {
+                 feedbackAlertTitle = "Nome Inválido"; feedbackAlertMessage = "O nome da sessão não pode ficar vazio."; showFeedbackAlert = true; return
+             }
         }
+
+
         if exerciciosSessaoAtual.isEmpty {
             feedbackAlertTitle = "Sessão Vazia"; feedbackAlertMessage = "Adicione pelo menos um exercício."; showFeedbackAlert = true; return
         }
 
-        if gerenciadorSessoes.salvarOuAtualizarSessao(idSessao: idSessaoEditando, nome: nomeTrimmed, exercicios: exerciciosSessaoAtual) {
-            feedbackAlertTitle = "Sucesso!"; feedbackAlertMessage = "Sessão '\(nomeTrimmed)' foi salva."
+        if gerenciadorSessoes.salvarOuAtualizarSessao(idSessao: idSessaoEditando, nome: nomeFinalParaSalvar, exercicios: exerciciosSessaoAtual) {
+            feedbackAlertTitle = "Sucesso!"
+            feedbackAlertMessage = "Sessão '\(nomeFinalParaSalvar)' foi salva."
             modoCriacaoEdicaoAtivo = false
             nomeSessaoAtual = ""; exerciciosSessaoAtual = []; idSessaoEditando = nil
+            nomeSessaoEditadoPeloUsuario = false
         } else {
             feedbackAlertTitle = "Falha ao Salvar"
             if !gerenciadorSessoes.podeCriarNovaSessao && idSessaoEditando == nil {
@@ -261,6 +305,7 @@ struct AddModel: View {
             exerciciosSessaoAtual[index].series.append(SerieDetalhe(numeroSerie: proximoNumeroSerie))
         }
     }
+
     func removerSerieComObjeto(de idExercicioSessao: UUID, serieParaRemover: SerieDetalhe) {
         if let indexExercicio = exerciciosSessaoAtual.firstIndex(where: { $0.id == idExercicioSessao }) {
             if exerciciosSessaoAtual[indexExercicio].series.count <= 1 {
@@ -277,21 +322,53 @@ struct AddModel: View {
         let formatter = DateFormatter(); formatter.dateStyle = .short; formatter.timeStyle = .none
         return formatter.string(from: data)
     }
-    
-    private func gerarNomeSessaoPlaceholder() -> String {
-        let numeroExistenteSessoes = gerenciadorSessoes.sessoesDeTreinoSalvas.count
-        if numeroExistenteSessoes < gerenciadorSessoes.limiteMaximoSessoes {
-            let letraIndex = numeroExistenteSessoes
-            if letraIndex < 26 {
-                 let letra = String(UnicodeScalar("A".unicodeScalars.first!.value + UInt32(letraIndex))!)
+
+    private func gerarNomeSessaoPlaceholderCalculado(considerandoSessaoAtualComoPotencialmenteNova: Bool = true) -> String {
+        var proximoIndice = gerenciadorSessoes.sessoesDeTreinoSalvas.count
+
+        if !considerandoSessaoAtualComoPotencialmenteNova && idSessaoEditando != nil {
+            return "Nome da sessão"
+        }
+
+        if proximoIndice < gerenciadorSessoes.limiteMaximoSessoes {
+            if proximoIndice < 26 {
+                 let letra = String(UnicodeScalar("A".unicodeScalars.first!.value + UInt32(proximoIndice))!)
                  return "Treino \(letra)"
             } else {
-                 return "Treino \(letraIndex + 1)"
+                 return "Treino \(proximoIndice + 1)"
             }
         }
         return "Nova Sessão"
     }
+    
+    
+    private func textoPlaceholderNomeSessao() -> String {
+        if idSessaoEditando == nil {
+            if !nomeSessaoEditadoPeloUsuario && nomeSessaoAtual == gerarNomeSessaoPlaceholderCalculado() {
+                return nomeSessaoAtual
+            }
+            return gerarNomeSessaoPlaceholderCalculado()
+        }
+        return "Nome da sessão"
+    }
+    
+    private func tituloDaToolbar() -> String {
+        if modoCriacaoEdicaoAtivo {
+            if idSessaoEditando == nil {
+                if nomeSessaoAtual == gerarNomeSessaoPlaceholderCalculado() && !nomeSessaoEditadoPeloUsuario {
+                    return "Nova Sessão"
+                }
+    
+                return nomeSessaoAtual.isEmpty ? "Nova Sessão" : nomeSessaoAtual
+            } else {
+                return "Editar: \(nomeSessaoAtual.isEmpty ? "Sessão" : nomeSessaoAtual)"
+            }
+        } else {
+            return "Minhas Sessões"
+        }
+    }
 }
+
 struct SerieRowView: View {
     @Binding var serie: SerieDetalhe
     let canBeDeleted: Bool
@@ -305,15 +382,15 @@ struct SerieRowView: View {
                 .foregroundColor(Color.white.opacity(0.9))
                 .modifier(CabecalhoSerieStyle(alignment: .center))
 
-            TextField("", text: $serie.peso, prompt: Text(serie.peso.isEmpty || serie.peso == "--" ? "--" : "").foregroundColor(placeholderColor))
+            TextField("", text: $serie.peso, prompt: Text(serie.peso.isEmpty || serie.peso == "--" ? "--" : serie.peso).foregroundColor(placeholderColor))
                 .modifier(TextFieldEditorSerieStyle())
                 .onTapGesture { if serie.peso == "--" { serie.peso = "" } }
 
-            TextField("", text: $serie.reps, prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12" : "").foregroundColor(placeholderColor))
+            TextField("", text: $serie.reps, prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12" : serie.reps).foregroundColor(placeholderColor))
                 .modifier(TextFieldEditorSerieStyle())
                 .onTapGesture { if serie.reps == "8-12" { serie.reps = "" } }
 
-            TextField("", text: $serie.descanso, prompt: Text(serie.descanso.isEmpty || serie.descanso == "2min" ? "2min" : "").foregroundColor(placeholderColor))
+            TextField("", text: $serie.descanso, prompt: Text(serie.descanso.isEmpty || serie.descanso == "2min" ? "2min" : serie.descanso).foregroundColor(placeholderColor))
                 .modifier(TextFieldEditorSerieStyle())
                 .onTapGesture { if serie.descanso == "2min" { serie.descanso = "" } }
 
@@ -328,39 +405,33 @@ struct SerieRowView: View {
         .padding(.vertical, 2)
     }
 }
+
 struct TextFieldEditorSerieStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .foregroundColor(.white)
             .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 10))
-            .keyboardType(.numbersAndPunctuation)
+            .keyboardType(.default)
             .frame(maxWidth: .infinity, minHeight: 35)
             .multilineTextAlignment(.center)
             .overlay(
-                Rectangle().frame(height: 1).padding(.top, 30).foregroundColor(Color.gray.opacity(0.3)),
-                alignment: .bottom
+                VStack {
+                    Spacer()
+                    Rectangle().frame(height: 1).foregroundColor(Color.gray.opacity(0.4))
+                }
             )
     }
 }
-struct CabecalhoSerieStyle: ViewModifier {
-    var alignment: Alignment = .leading
-    func body(content: Content) -> some View {
-        content
-            .font(.caption.weight(.medium))
-            .foregroundColor(.gray)
-            .frame(maxWidth: .infinity, alignment: alignment)
-    }
-}
-struct TreinosTemplatesView: View {
-    var body: some View {
-        ZStack {
-            Color("BackgroundColor").edgesIgnoringSafeArea(.all)
-            Text("Templates de Treino (A Implementar)")
-                .foregroundColor(.white)
-                .navigationTitle("Templates")
-        }
-    }
-}
+
+//struct CabecalhoSerieStyle: ViewModifier {
+//    var alignment: Alignment = .leading
+//    func body(content: Content) -> some View {
+//        content
+//            .font(.caption.weight(.semibold))
+//            .foregroundColor(.gray)
+//            .frame(maxWidth: .infinity, alignment: alignment)
+//    }
+//}
 #Preview {
     NavigationView {
         AddModel()

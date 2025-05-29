@@ -4,6 +4,7 @@ struct TelaListTreino: View {
     @State var AddModelPresented = false
     @State private var deveAdicionarTreino = false
     @AppStorage("objetivoSelecionado") private var objetivoSalvo: String = ""
+    @StateObject private var gerenciadorSessoes = GerenciadorSessoesViewModel()
     
     var treinosPorObjetivo: [String: [[String]]] = [
         "Emagrecimento": [
@@ -73,8 +74,9 @@ struct TelaListTreino: View {
             }
             .sheet(isPresented: $AddModelPresented) {
                 AddModel()
+                    .environmentObject(gerenciadorSessoes)
+                    .interactiveDismissDisabled(true)
             }
-            
             NavigationLink(destination: AdicionarSessao(), isActive: $deveAdicionarTreino) {
                 EmptyView()
             }

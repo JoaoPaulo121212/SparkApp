@@ -6,7 +6,7 @@ struct WelcomeView: View {
         NavigationStack {
             ZStack {
                 Color(red: 17/255, green: 14/255, blue: 11/255)
-                    .ignoresSafeArea()
+                    .edgesIgnoringSafeArea(.all)
                 VStack {
                     Image("SparkLogo")
                         .resizable()
