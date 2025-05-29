@@ -1,5 +1,5 @@
 import SwiftUI
-import PhotosUI // Importe PhotosUI
+// import PhotosUI // Não é mais necessário aqui se apenas TelaEditarPerfil usa
 
 struct DiaSequencia: Identifiable {
     let id = UUID()
@@ -14,7 +14,10 @@ struct TelaPerfil: View {
     @AppStorage("idadeUsuario") var idade: Int = 0
     @AppStorage("alturaUsuario") var alturaCm: Int = 0
     @AppStorage("pesoUsuario") var pesoKg: Double = 0.0
+    @AppStorage("profileImageData") private var profileImageData: Data?
 
+    
+    
     @State private var sequenciaDias: [DiaSequencia] = [
         DiaSequencia(letra: "Q"),
         DiaSequencia(letra: "Q"),
@@ -26,60 +29,41 @@ struct TelaPerfil: View {
     let corTextoSecundario = Color.gray
     let corDestaque = Color(red: 233/255, green: 9/255, blue: 22/255)
     let corCardResumo = Color("ColorCard")
-
-    @State private var selectedItem: PhotosPickerItem?
-    @State private var profileImage: Image?
-
+    
+    // Removido @State para selectedItem e profileImage
+    @State private var showingEditSheet = false
+    
     var body: some View {
         ZStack {
             corDeFundoPrincipal.ignoresSafeArea()
-
+            
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
                     HStack {
                         Spacer()
-                        Button(action: {
-                            print("Botão de Configurações pressionado!")
-                        }) {
-                            Image(systemName: "gearshape.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
                     }
                     .padding(.horizontal)
                     .padding(.top)
                     HStack(spacing: 20) {
-                        PhotosPicker(
-                            selection: $selectedItem,
-                            matching: .images,
-                            photoLibrary: .shared()
-                        ) {
-                            if let profileImage = profileImage {
-                                profileImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .clipShape(Circle())
-                            } else {
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(corTextoSecundario)
-                                    .background(Color.gray.opacity(0.3))
-                                    .clipShape(Circle())
-                            }
-                        }
-                        .onChange(of: selectedItem) { _, newItem in
-                            Task {
-                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                    if let uiImage = UIImage(data: data) {
-                                        profileImage = Image(uiImage: uiImage)
-                                    }
-                                }
-                            }
+                        // Imagem de placeholder estática
+                        if let data = profileImageData,
+                           let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 80, height: 80)
+                                .clipShape(Circle())
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(corTextoSecundario)
+                                .background(Color.gray.opacity(0.3))
+                                .clipShape(Circle())
                         }
 
+                        
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 Text(nomeUsuario)
@@ -88,6 +72,7 @@ struct TelaPerfil: View {
                                     .foregroundColor(.white)
                                 Button(action: {
                                     print("Botão Editar pressionado!")
+                                    showingEditSheet = true
                                 }) {
                                     Image(systemName: "pencil")
                                         .resizable()
@@ -109,13 +94,14 @@ struct TelaPerfil: View {
                         Spacer()
                     }
                     .padding(.horizontal)
+                    // ... (resto do VStack da TelaPerfil)
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Sua sequência está")
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .padding(.horizontal)
-
+                        
                         HStack(spacing: 12) {
                             ForEach(sequenciaDias) { dia in
                                 DiaView(dia: dia, corDestaque: corDestaque, corTextoPrincipal: .white)
@@ -129,7 +115,7 @@ struct TelaPerfil: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .padding(.horizontal)
-
+                        
                         ZStack {
                             RoundedRectangle(cornerRadius: 20)
                                 .fill(corCardResumo)
@@ -141,26 +127,36 @@ struct TelaPerfil: View {
                         .frame(height: 200)
                         .padding(.horizontal)
                     }
-
+                    
                     Spacer()
                 }
+            }
+            .sheet(isPresented: $showingEditSheet) {
+                TelaEditarPerfil( // Chamada SEM o parâmetro profileImage
+                    nomeUsuario: $nomeUsuario,
+                    idadeUsuario: $idade,
+                    alturaUsuarioCm: $alturaCm,
+                    pesoUsuarioKg: $pesoKg
+                )
+                .interactiveDismissDisabled(true)
             }
         }
     }
 }
 
+// DiaView e Preview permanecem os mesmos
 struct DiaView: View {
     let dia: DiaSequencia
     let corDestaque: Color
     let corTextoPrincipal: Color
-
+    
     var body: some View {
         VStack(spacing: 4) {
             Text(dia.letra)
                 .font(.title3)
                 .fontWeight(.bold)
                 .foregroundColor(dia.estaDestacado ? corDestaque : corTextoPrincipal)
-
+            
             if let treinoInfo = dia.treinoInfo, dia.estaDestacado {
                 Text(treinoInfo)
                     .font(.caption)
@@ -171,9 +167,7 @@ struct DiaView: View {
         .frame(width: 60, height: 80)
         .background(
             Capsule()
-                // --- ALTERAÇÃO APLICADA AQUI ---
                 .fill(dia.estaDestacado ? corDestaque.opacity(0.25) : Color("ColorCard"))
-                // --- FIM DA ALTERAÇÃO ---
         )
     }
 }
