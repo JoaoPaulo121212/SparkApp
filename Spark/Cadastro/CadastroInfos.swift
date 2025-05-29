@@ -109,7 +109,6 @@ struct TopBarCadastro: View {
                 Image(systemName: "chevron.left")
                     .foregroundColor(Color(red: 233/255, green: 9/255, blue: 22/255))
                     .font(.system(size: 25, weight: .bold))
-                    .offset(x: 0, y: 15)
             }
             Spacer()
         }
@@ -117,7 +116,6 @@ struct TopBarCadastro: View {
         .padding(.top)
     }
 }
-
 struct CamposCadastroView: View {
     @Binding var nome: String
     @Binding var idadeTexto: String
@@ -136,7 +134,6 @@ struct CamposCadastroView: View {
         
     }
 }
-
 struct BotaoConcluirCadastro: View {
     var podeConcluir: Bool
     var action: () -> Void
@@ -159,7 +156,6 @@ struct BotaoConcluirCadastro: View {
         
     }
 }
-
 struct CampoCadastro: View {
     var label: String
     var placeholder: String

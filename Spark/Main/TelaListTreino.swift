@@ -40,9 +40,9 @@ struct TelaListTreino: View {
                         Button(action: {
                             AddModelPresented = true
                         }) {
-                            Image(systemName: "plus.circle")
+                            Image(systemName: "plus")
                                 .resizable()
-                                .frame(width: 30, height: 30)
+                                .frame(width: 20, height: 20)
                                 .foregroundColor(.white)
                         }
                         .padding(.trailing)
