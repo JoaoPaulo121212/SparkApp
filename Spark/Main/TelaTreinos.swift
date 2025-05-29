@@ -31,8 +31,9 @@ struct TelaTreinos: View {
                             streakPresented = true
                         } label: {
                             Image(systemName: "flame")
-                                .foregroundColor(.white)
+                                .foregroundColor(Color("CorBotao"))
                                 .font(.system(size: 25))
+                            
                         }
                     }
                     .padding(.horizontal)
@@ -100,9 +101,9 @@ struct TelaTreinos: View {
             Treino(nome: "Treino C", view: { concluir in
                 AnyView(TreinoCView(concluirTreino: concluir))
             }),
-            Treino(nome: "Treino D", view: { concluir in
-                AnyView(TreinoDView(concluirTreino: concluir))
-            })
+//            Treino(nome: "Treino D", view: { concluir in
+//                AnyView(TreinoDView(concluirTreino: concluir))
+//            })
         ]
     }
 }

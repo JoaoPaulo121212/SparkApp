@@ -77,10 +77,9 @@ struct TelaListTreino: View {
                     .environmentObject(gerenciadorSessoes)
                     .interactiveDismissDisabled(true)
             }
-            NavigationLink(destination: AdicionarSessao(), isActive: $deveAdicionarTreino) {
-                EmptyView()
+            .navigationDestination(isPresented: $deveAdicionarTreino) {
+                AdicionarSessao()
             }
-            .hidden()
         }
         .navigationBarBackButtonHidden(true)
     }

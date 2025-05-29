@@ -25,7 +25,7 @@ struct WelcomeView: View {
                                 .foregroundColor(.white)
                                 .padding()
                                 .frame(width: 200, height: 50)
-                                .background(Color(red : 233/255, green: 9/255, blue: 22/255))
+                                .background(Color("CorOk"))
                                 .cornerRadius(12)
                     }
                 }
@@ -36,4 +36,5 @@ struct WelcomeView: View {
 }
 #Preview {
     WelcomeView()
+        
 }

@@ -8,7 +8,7 @@ struct ProgressBarCadastro: View {
                 Rectangle()
                     .fill(tela <= currentTela
                     ? Color(red: 233/255, green: 9/255, blue: 22/255)
-                    : Color(red: 41/255, green: 38/255, blue: 35/255))
+                    : Color("ColorCard"))
                     .frame(height: 6)
                     .cornerRadius(3)
             }

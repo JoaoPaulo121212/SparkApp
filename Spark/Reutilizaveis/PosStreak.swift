@@ -6,7 +6,7 @@ struct PosStreak: View {
     var body: some View {
         ZStack {
             Color("BackgroundColor")
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 30) {
                 Image(systemName: "flame.fill")
@@ -49,4 +49,5 @@ struct PosStreak: View {
 
 #Preview {
     PosStreak()
+        .preferredColorScheme(.dark)
 }

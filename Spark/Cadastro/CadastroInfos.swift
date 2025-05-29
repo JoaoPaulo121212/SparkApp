@@ -42,7 +42,7 @@ struct CadastroInfos: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .foregroundColor(Color(red: 233/255, green: 9/255, blue: 22/255))
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: 23, weight: .bold))
                     }
                     ProgressBarCadastro(currentTela: 2)
 
@@ -147,8 +147,8 @@ struct BotaoConcluirCadastro: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     podeConcluir
-                    ? Color("CorBotao")
-                    : Color(red: 41/255, green: 38/255, blue: 35/255)
+                    ? Color("CorOk")
+                    : Color("ColorCard")
                 )
                 .cornerRadius(12)
         }
@@ -181,7 +181,7 @@ struct CampoCadastro: View {
                     .padding()
                     .keyboardType(keyboard)
             }
-            .background(Color(red: 41/255, green: 38/255, blue: 35/255))
+            .background(Color("ColorCard"))
             .cornerRadius(12)
             .padding(.bottom, 30)
         }
@@ -190,4 +190,5 @@ struct CampoCadastro: View {
 
 #Preview {
     CadastroInfos()
+        .preferredColorScheme(.dark)
 }

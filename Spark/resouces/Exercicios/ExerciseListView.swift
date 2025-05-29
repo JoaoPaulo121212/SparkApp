@@ -57,22 +57,6 @@ struct ExerciseListView: View {
             }
             .font(.subheadline)
             .foregroundColor(.gray)
-            
-            if let firstInstruction = exercise.instrucoes.first, !firstInstruction.isEmpty {
-                Text("Instruções: \(firstInstruction.prefix(150))...")
-                    .font(.caption)
-                    .foregroundColor(Color.white.opacity(0.7))
-                    .lineLimit(3)
-                    .padding(.top, 4)
-            }
-            if aoSelecionarExercicio != nil {
-                Button("Adicionar ao Treino") {
-                    aoSelecionarExercicio!(exercise)
-                    dismiss()
-                }
-                .padding(.top, 5)
-                .foregroundColor(Color("CorBotao"))
-            }
         }
         .padding(.vertical, 10)
     }
