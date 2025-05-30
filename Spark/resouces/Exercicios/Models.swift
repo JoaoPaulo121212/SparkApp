@@ -21,8 +21,8 @@ struct ExercicioLocal: Identifiable, Codable {
 struct SerieDetalhe: Identifiable, Codable {
     var id = UUID()
     var numeroSerie: Int = 1
-    var reps: String = "8-12"
-    var peso: String = "--"
+    var reps: String = ""
+    var peso: String = ""
     var descanso: String = "2min"
     var concluida: Bool = false
 }

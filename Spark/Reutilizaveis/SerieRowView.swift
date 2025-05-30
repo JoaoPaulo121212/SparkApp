@@ -20,7 +20,7 @@ struct SerieRowView: View {
             .onTapGesture { if serie.peso == "--" { serie.peso = "" } }
 
             TextField("", text: $serie.reps,
-                      prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12 reps" : serie.reps)
+                      prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12" : serie.reps)
                                 .foregroundColor(placeholderColor)
             )
             .modifier(TextFieldEditorSerieStyle())

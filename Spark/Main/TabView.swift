@@ -26,4 +26,6 @@ struct TabViewTeste: View {
 #Preview {
     TabViewTeste()
         .preferredColorScheme(.dark)
+        .environmentObject(GerenciadorSessoesViewModel())
+
 }

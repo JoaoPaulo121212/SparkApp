@@ -4,7 +4,8 @@ struct TelaListTreino: View {
     @State var AddModelPresented = false
     @State private var deveAdicionarTreino = false
     @AppStorage("objetivoSelecionado") private var objetivoSalvo: String = ""
-    @StateObject private var gerenciadorSessoes = GerenciadorSessoesViewModel()
+    
+    @EnvironmentObject private var gerenciadorSessoes: GerenciadorSessoesViewModel
     
     var treinosPorObjetivo: [String: [[String]]] = [
         "Emagrecimento": [
@@ -52,18 +53,28 @@ struct TelaListTreino: View {
                     
                     ScrollView {
                         VStack(spacing: 16) {
-                            if let treinos = treinosPorObjetivo[objetivoSalvo] {
-                                ForEach(Array(treinos.enumerated()), id: \.offset) { index, exercicios in
+                            if gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty && treinosPorObjetivo[objetivoSalvo] == nil {
+                                Text("Nenhum treino disponível")
+                                    .foregroundColor(.white)
+                            } else {
+                                ForEach(gerenciadorSessoes.sessoesDeTreinoSalvas) { sessao in
                                     CardTreinoEditavel(
-                                        titulo: "Treino \(Character(UnicodeScalar(65 + index)!))",
-                                        exercicios: exercicios
+                                        titulo: sessao.nomeSessao,
+                                        exercicios: sessao.exercicios.map { $0.exercicioBase.nome }
                                     )
                                     .frame(maxWidth: .infinity)
                                 }
-                            } else {
-                                Text("Nenhum treino disponível")
-                                    .foregroundColor(.white)
+                                if let treinos = treinosPorObjetivo[objetivoSalvo] {
+                                    ForEach(Array(treinos.enumerated()), id: \.offset) { index, exercicios in
+                                        CardTreinoEditavel(
+                                            titulo: "Treino \(Character(UnicodeScalar(65 + index)!))",
+                                            exercicios: exercicios
+                                        )
+                                        .frame(maxWidth: .infinity)
+                                    }
+                                }
                             }
+
                         }
                         .padding()
                     }
@@ -87,4 +98,5 @@ struct TelaListTreino: View {
 #Preview {
     TelaListTreino()
         .preferredColorScheme(.dark)
+        .environmentObject(GerenciadorSessoesViewModel())
 }
