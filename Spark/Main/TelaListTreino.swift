@@ -84,8 +84,6 @@ struct TelaListTreino: View {
         .navigationBarBackButtonHidden(true)
     }
 }
-
-
 #Preview {
     TelaListTreino()
         .preferredColorScheme(.dark)

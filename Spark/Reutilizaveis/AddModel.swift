@@ -147,7 +147,7 @@ struct AddModel: View {
                             .textCase(nil)
                     ) {
                         ForEach($itemSessao.series) { $serieDetalhe in
-                            SerieRowView(serie: $serieDetalhe) // Não passa mais canBeDeleted ou onDelete
+                            SerieRowView(serie: $serieDetalhe)
                         }
                         .onDelete { offsets in
                             excluirSerieDoExercicioPorSwipe(exercicioId: itemSessao.id, at: offsets)
@@ -194,9 +194,6 @@ struct AddModel: View {
                 Image(systemName: "figure.strengthtraining.traditional")
                      .font(.system(size: 70)).foregroundColor(corTextoPrincipal.opacity(0.3)).padding(.bottom)
                 Text("Nenhuma sessão de treino salva.").font(.title3).foregroundColor(corTextoSecundario)
-                Text("Clique no '+' na barra superior para criar sua primeira sessão!")
-                    .font(.callout).foregroundColor(corTextoPrincipal.opacity(0.5))
-                    .multilineTextAlignment(.center).padding()
                 Spacer()
             } else {
                 Text("Minhas Sessões (\(gerenciadorSessoes.sessoesDeTreinoSalvas.count)/\(gerenciadorSessoes.limiteMaximoSessoes))")
