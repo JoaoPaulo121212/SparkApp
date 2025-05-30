@@ -59,6 +59,17 @@ struct ExerciseListView: View {
             .foregroundColor(.gray)
         }
         .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if let callback = aoSelecionarExercicio {
+                print("Exercício selecionado: \(exercise.nome)")
+                callback(exercise)
+                dismiss()
+            } else {
+                print("Card do exercício '\(exercise.nome)' tocado, mas sem ação de seleção definida.")
+            }
+        }
     }
     
     @ViewBuilder
@@ -82,44 +93,50 @@ struct ExerciseListView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                searchBarView()
-                mainContentView()
-            }
-            .background(Color("BackgroundColor").ignoresSafeArea())
-            .navigationTitle("Exercícios")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        searchText = ""
-                        viewModel.carregarExerciciosLocais(grupoMuscular: grupoMuscularParaCarregar)
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle")
-                            .foregroundColor(Color(red: 233/255, green: 9/255, blue: 22/255))
+        VStack(spacing: 0) {
+            searchBarView()
+            mainContentView()
+        }
+        .background(Color("BackgroundColor").ignoresSafeArea())
+        .navigationTitle("Adicionar Exercício")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if aoSelecionarExercicio != nil {
+                    Button("Cancelar") {
+                        dismiss()
                     }
-                    .disabled(viewModel.isLoading)
+                    .foregroundColor(Color("CorBotao"))
                 }
             }
-            .onAppear {
-                if viewModel.exerciciosExibidos.isEmpty {
-                    viewModel.carregarExerciciosLocais(grupoMuscular: grupoMuscularParaCarregar)
-                }
-            }
-            .alert("Aviso", isPresented: Binding(
-                get: { viewModel.alertMessage != nil },
-                set: { if !$0 { viewModel.alertMessage = nil } }
-            )) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(viewModel.alertMessage ?? "Ocorreu um erro desconhecido.")
+            
+        }
+        .onAppear {
+            if viewModel.exerciciosExibidos.isEmpty {
+                
+                viewModel.carregarExerciciosLocais(grupoMuscular: grupoMuscularParaCarregar)
             }
         }
-        .accentColor(Color(red: 233/255, green: 9/255, blue: 22/255))
+        .alert("Aviso", isPresented: Binding(
+            get: { viewModel.alertMessage != nil },
+            set: { if !$0 { viewModel.alertMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.alertMessage ?? "Ocorreu um erro desconhecido.")
+        }
     }
 }
+
 #Preview {
-    ExerciseListView(grupoMuscularParaCarregar: nil)
+    NavigationView {
+        ExerciseListView(
+            grupoMuscularParaCarregar: nil,
+            aoSelecionarExercicio: { exercicio in
+                print("Preview: Exercício '\(exercicio.nome)' selecionado.")
+            }
+        )
+        .environmentObject(ExerciseViewModel())
         .preferredColorScheme(.dark)
+    }
 }
