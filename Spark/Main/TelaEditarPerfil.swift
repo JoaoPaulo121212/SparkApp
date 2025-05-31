@@ -14,7 +14,6 @@ struct TelaEditarPerfil: View {
     @State private var pesoEdit: String = ""
     @State private var alturaMetrosEdit: String = ""
 
-    // Estado local para o PhotosPicker DENTRO de TelaEditarPerfil
     @State private var localSelectedItem: PhotosPickerItem? = nil
     @State private var localProfileImage: Image? = nil // Imagem exibida localmente
 
@@ -23,8 +22,8 @@ struct TelaEditarPerfil: View {
     @AppStorage("profileImageData") private var profileImageData: Data?
 
 
-    // Constantes de estilo (podem ser as mesmas ou ajustadas)
-    let corDeFundoPrincipal = Color("BackgroundColor") // Supondo que esteja nos Assets
+ 
+    let corDeFundoPrincipal = Color("BackgroundColor")
     let corTextoPrincipal = Color.white
     let corTextoPlaceHolder = Color.gray
     let corCampoTextoBackground = Color.gray.opacity(0.25)
@@ -71,9 +70,7 @@ struct TelaEditarPerfil: View {
                         }
                         .padding(.top, 20)
                         .padding(.bottom, 10)
-
-                        // Campos do formulário (Nome, Idade, Peso, Altura)
-                        // ... (código dos TextFields como antes) ...
+                        
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Nome:")
                                 .foregroundColor(corTextoPrincipal)
@@ -174,9 +171,7 @@ struct TelaEditarPerfil: View {
                 idadeEdit = idadeUsuario > 0 ? "\(idadeUsuario)" : ""
                 pesoEdit = pesoUsuarioKg > 0.0 ? String(format: "%.1f", pesoUsuarioKg).replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".") : ""
                 alturaMetrosEdit = alturaUsuarioCm > 0 ? String(format: "%.2f", Double(alturaUsuarioCm) / 100.0).replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".") : ""
-                
-                // Não há imagem inicial vinda da TelaPerfil, então localProfileImage começa como nil
-                // e localSelectedItem também.
+
             }
         }
         .accentColor(corTextoPrincipal)
@@ -227,8 +222,6 @@ struct TelaEditarPerfil: View {
         } else {
             alturaUsuarioCm = 0
         }
-        // A imagem local (localProfileImage) não é salva de volta nos @AppStorage
-        // ou na TelaPerfil com esta configuração.
         dismiss()
     }
 }

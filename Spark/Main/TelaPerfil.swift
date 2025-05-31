@@ -15,22 +15,22 @@ struct TelaPerfil: View {
     @AppStorage("alturaUsuario") var alturaCm: Int = 0
     @AppStorage("pesoUsuario") var pesoKg: Double = 0.0
     @AppStorage("profileImageData") private var profileImageData: Data?
-
-    
     
     @State private var sequenciaDias: [DiaSequencia] = [
+        DiaSequencia(letra: "D"),
+        DiaSequencia(letra: "S", treinoInfo: "Treino A", estaDestacado: true), // "S" agora está destacado
+        DiaSequencia(letra: "T", treinoInfo: "Treino B", estaDestacado: true),
         DiaSequencia(letra: "Q"),
         DiaSequencia(letra: "Q"),
-        DiaSequencia(letra: "S", treinoInfo: "Treino A", estaDestacado: true),
         DiaSequencia(letra: "S"),
-        DiaSequencia(letra: "D")
+        DiaSequencia(letra: "S")
     ]
+    
     let corDeFundoPrincipal = Color("BackgroundColor")
     let corTextoSecundario = Color.gray
     let corDestaque = Color(red: 233/255, green: 9/255, blue: 22/255)
     let corCardResumo = Color("ColorCard")
     
-    // Removido @State para selectedItem e profileImage
     @State private var showingEditSheet = false
     
     var body: some View {
@@ -44,8 +44,8 @@ struct TelaPerfil: View {
                     }
                     .padding(.horizontal)
                     .padding(.top)
+                    
                     HStack(spacing: 20) {
-                        // Imagem de placeholder estática
                         if let data = profileImageData,
                            let uiImage = UIImage(data: data) {
                             Image(uiImage: uiImage)
@@ -62,7 +62,6 @@ struct TelaPerfil: View {
                                 .background(Color.gray.opacity(0.3))
                                 .clipShape(Circle())
                         }
-
                         
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
@@ -70,6 +69,7 @@ struct TelaPerfil: View {
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
+                                
                                 Button(action: {
                                     print("Botão Editar pressionado!")
                                     showingEditSheet = true
@@ -94,7 +94,7 @@ struct TelaPerfil: View {
                         Spacer()
                     }
                     .padding(.horizontal)
-                    // ... (resto do VStack da TelaPerfil)
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Sua sequência está")
                             .font(.title2)
@@ -102,37 +102,42 @@ struct TelaPerfil: View {
                             .foregroundColor(.white)
                             .padding(.horizontal)
                         
-                        HStack(spacing: 12) {
-                            ForEach(sequenciaDias) { dia in
-                                DiaView(dia: dia, corDestaque: corDestaque, corTextoPrincipal: .white)
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Seu resumo")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal)
+                        Spacer()
                         
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(corCardResumo)
-                            Text("No data yet")
-                                .font(.title3)
-                                .foregroundColor(corTextoSecundario)
-                                .padding(50)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(sequenciaDias) { dia in
+                                    DiaView(dia: dia, corDestaque: corDestaque, corTextoPrincipal: .white)
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .frame(height: 200)
-                        .padding(.horizontal)
+                        Spacer()
+//                    VStack(alignment: .leading, spacing: 10) {
+//                        Text("Seu resumo")
+//                            .font(.title2)
+//                            .fontWeight(.semibold)
+//                            .foregroundColor(.white)
+//                            .padding(.horizontal)
+//
+//                        ZStack {
+//                            RoundedRectangle(cornerRadius: 20)
+//                                .fill(corCardResumo)
+//                            Text("No data yet")
+//                                .font(.title3)
+//                                .foregroundColor(corTextoSecundario)
+//                                .padding(50)
+//                        }
+//                        .frame(height: 200)
+//                        .padding(.horizontal)
+//                    }
                     }
                     
                     Spacer()
                 }
             }
             .sheet(isPresented: $showingEditSheet) {
-                TelaEditarPerfil( // Chamada SEM o parâmetro profileImage
+                TelaEditarPerfil(
                     nomeUsuario: $nomeUsuario,
                     idadeUsuario: $idade,
                     alturaUsuarioCm: $alturaCm,
@@ -144,7 +149,6 @@ struct TelaPerfil: View {
     }
 }
 
-// DiaView e Preview permanecem os mesmos
 struct DiaView: View {
     let dia: DiaSequencia
     let corDestaque: Color
@@ -165,6 +169,7 @@ struct DiaView: View {
             }
         }
         .frame(width: 60, height: 80)
+        .padding()
         .background(
             Capsule()
                 .fill(dia.estaDestacado ? corDestaque.opacity(0.25) : Color("ColorCard"))
