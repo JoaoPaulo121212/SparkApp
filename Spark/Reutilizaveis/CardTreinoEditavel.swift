@@ -16,6 +16,7 @@ struct CardTreinoEditavel: View {
                         Text("• \(exercicio)")
                             .foregroundColor(.white.opacity(0.85))
                             .font(.subheadline)
+                        
                     }
                 }
                 .padding()
@@ -23,9 +24,9 @@ struct CardTreinoEditavel: View {
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
 
-                Image(systemName: "pencil")
-                    .foregroundColor(.white)
-                    .padding(10)
+//                Image(systemName: "pencil")
+//                    .foregroundColor(.white)
+//                    .padding(10)
             }
         }
         .buttonStyle(PlainButtonStyle()) // remove animação padrão do botão

@@ -18,6 +18,7 @@ struct AddModel: View {
     @State var modoCriacaoEdicaoAtivo = false // Removido 'private'
     @State var nomeSessaoInteragido = false // Removido 'private'
 
+
     // MARK: - UI Constants
     let textFieldPrincipalBackgroundColor = Color.gray.opacity(0.25)
     let placeholderColor = Color.gray.opacity(0.6)
@@ -146,12 +147,21 @@ struct AddModel: View {
                             .padding(.vertical, 8).frame(maxWidth: .infinity, alignment: .leading)
                             .textCase(nil)
                     ) {
-                        ForEach($itemSessao.series) { $serieDetalhe in
-                            SerieRowView(serie: $serieDetalhe)
-                        }
-                        .onDelete { offsets in
-                            excluirSerieDoExercicioPorSwipe(exercicioId: itemSessao.id, at: offsets)
-                        }
+                        ForEach(itemSessao.series) { serie in
+                                SerieRowView(serie: Binding(
+                                    get: { serie },
+                                    set: { novoValor in
+                                        if let indexExercicio = exerciciosSessaoAtual.firstIndex(where: { $0.id == itemSessao.id }),
+                                           let indexSerie = exerciciosSessaoAtual[indexExercicio].series.firstIndex(where: { $0.id == serie.id }) {
+                                            exerciciosSessaoAtual[indexExercicio].series[indexSerie] = novoValor
+                                        }
+                                    }
+                                ))
+                            }
+                            .onDelete { offsets in
+                                excluirSerieDoExercicioPorSwipe(exercicioId: itemSessao.id, at: offsets)
+                            }
+
                         
                         Button(action: { adicionarSerie(a: itemSessao.id) }) {
                             HStack { Image(systemName: "plus.circle.fill"); Text("Adicionar Série") }
@@ -163,10 +173,9 @@ struct AddModel: View {
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                 }
-                .onDelete(perform: excluirExercicioDaSessao)
+
             }
             .listStyle(.plain).background(Color("BackgroundColor")).scrollContentBackground(.hidden)
-            .environment(\.editMode, .constant(.active))
 
             NavigationLink(destination: ExerciseListView(
                 aoSelecionarExercicio: { exercicioLocalSelecionado in
