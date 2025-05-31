@@ -1,26 +1,27 @@
 import SwiftUI
 
 struct SerieRowView: View {
-    @Binding var serie: SerieDetalhe
+    @Binding var serie: SerieDetalhe // SerieDetalhe de Models.swift
 
+    // Cores e Placeholders
     let placeholderColor = Color.gray.opacity(0.6)
-    let corTextoPrincipal = Color.white
+    let corTextoPrincipal = Color.white // Definindo para uso local
 
     var body: some View {
         HStack(spacing: 8) {
             Text("\(serie.numeroSerie)")
                 .foregroundColor(corTextoPrincipal.opacity(0.9))
-                .modifier(CabecalhoSerieStyle(alignment: .center))
+                .modifier(CabecalhoSerieStyle(alignment: .center)) // CabecalhoSerieStyle.swift
 
             TextField("", text: $serie.peso,
                       prompt: Text(serie.peso.isEmpty || serie.peso == "--" ? "-- kg" : serie.peso)
                                 .foregroundColor(placeholderColor)
             )
-            .modifier(TextFieldEditorSerieStyle())
+            .modifier(TextFieldEditorSerieStyle()) // TextFieldEditorSerieStyle.swift
             .onTapGesture { if serie.peso == "--" { serie.peso = "" } }
 
             TextField("", text: $serie.reps,
-                      prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12" : serie.reps)
+                      prompt: Text(serie.reps.isEmpty || serie.reps == "8-12" ? "8-12 reps" : serie.reps)
                                 .foregroundColor(placeholderColor)
             )
             .modifier(TextFieldEditorSerieStyle())
@@ -32,7 +33,9 @@ struct SerieRowView: View {
             )
             .modifier(TextFieldEditorSerieStyle())
             .onTapGesture { if serie.descanso == "2min" { serie.descanso = "" } }
+            
+            // NENHUM BOTÃO DE DELETAR AQUI
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 2) // Padding vertical para cada linha de série
     }
 }
