@@ -47,7 +47,9 @@ struct AddModel: View {
                         }
                     } else {
                         Button(action: { dismiss() }) {
-                            Image(systemName: "xmark").foregroundColor(corTextoPrincipal).imageScale(.medium)
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(corTextoPrincipal)
+                                .imageScale(.large)
                         }
                     }
                 }
@@ -66,9 +68,6 @@ struct AddModel: View {
                             || exerciciosSessaoAtual.isEmpty
                         )
                     } else {
-                        NavigationLink(destination: TreinosTemplatesView()) {
-                            Image(systemName: "list.bullet.clipboard").foregroundColor(corTextoPrincipal)
-                        }
                         Button(action: { showAlertInfo.toggle() }) {
                             Image(systemName: "info.circle").foregroundColor(corTextoPrincipal)
                         }
@@ -132,7 +131,6 @@ struct AddModel: View {
                     Text("PESO").modifier(CabecalhoSerieStyle(alignment: .center))
                     Text("REPS").modifier(CabecalhoSerieStyle(alignment: .center))
                     Text("DESCANSO").modifier(CabecalhoSerieStyle(alignment: .center))
-                    // O Spacer para o botão menos foi removido do cabeçalho
                 }
                 .padding(.horizontal)
                 .padding(.top, 10)

@@ -169,7 +169,7 @@ struct DiaView: View {
             }
         }
         .frame(width: 60, height: 80)
-        .padding()
+//        .padding()
         .background(
             Capsule()
                 .fill(dia.estaDestacado ? corDestaque.opacity(0.25) : Color("ColorCard"))

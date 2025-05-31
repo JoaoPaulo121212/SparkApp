@@ -36,13 +36,12 @@ struct TelaEditarPerfil: View {
 
                 ScrollView {
                     VStack(spacing: 25) {
-                        // PhotosPicker para a imagem de perfil local
                         PhotosPicker(
-                            selection: $localSelectedItem, // Usa o estado local
+                            selection: $localSelectedItem,
                             matching: .images,
                             photoLibrary: .shared()
                         ) {
-                            if let imageToDisplay = localProfileImage { // Exibe a imagem local
+                            if let imageToDisplay = localProfileImage {
                                 imageToDisplay
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
@@ -61,9 +60,9 @@ struct TelaEditarPerfil: View {
                         .onChange(of: localSelectedItem) { _, newItem in
                             Task {
                                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    self.profileImageData = data
                                     if let uiImage = UIImage(data: data) {
                                         self.localProfileImage = Image(uiImage: uiImage)
-                                        self.profileImageData = data // ⬅️ SALVA A IMAGEM
                                     }
                                 }
                             }
@@ -75,7 +74,7 @@ struct TelaEditarPerfil: View {
                             Text("Nome:")
                                 .foregroundColor(corTextoPrincipal)
                                 .font(.footnote)
-                            TextField("Usuário X", text: $nomeEdit)
+                            TextField("Ex: João Silva", text: $nomeEdit)
                                 .padding(12)
                                 .background(corCampoTextoBackground)
                                 .foregroundColor(corTextoPrincipal)
@@ -89,7 +88,7 @@ struct TelaEditarPerfil: View {
                                 .foregroundColor(corTextoPrincipal)
                                 .font(.footnote)
                                 .padding(.top, 10)
-                            TextField("X anos", text: $idadeEdit)
+                            TextField("Ex: 25 anos", text: $idadeEdit)
                                 .keyboardType(.numberPad)
                                 .padding(12)
                                 .background(corCampoTextoBackground)
@@ -105,7 +104,7 @@ struct TelaEditarPerfil: View {
                                 .foregroundColor(corTextoPrincipal)
                                 .font(.footnote)
                                 .padding(.top, 10)
-                            TextField("X kgs", text: $pesoEdit)
+                            TextField("Ex: 70.0 kgs", text: $pesoEdit)
                                 .keyboardType(.decimalPad)
                                 .padding(12)
                                 .background(corCampoTextoBackground)
@@ -121,7 +120,7 @@ struct TelaEditarPerfil: View {
                                 .foregroundColor(corTextoPrincipal)
                                 .font(.footnote)
                                 .padding(.top, 10)
-                            TextField("X.Ym", text: $alturaMetrosEdit)
+                            TextField("Ex: 170cm", text: $alturaMetrosEdit)
                                 .keyboardType(.decimalPad)
                                 .padding(12)
                                 .background(corCampoTextoBackground)
@@ -171,6 +170,11 @@ struct TelaEditarPerfil: View {
                 idadeEdit = idadeUsuario > 0 ? "\(idadeUsuario)" : ""
                 pesoEdit = pesoUsuarioKg > 0.0 ? String(format: "%.1f", pesoUsuarioKg).replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".") : ""
                 alturaMetrosEdit = alturaUsuarioCm > 0 ? String(format: "%.2f", Double(alturaUsuarioCm) / 100.0).replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".") : ""
+                if let data = profileImageData, let uiImage = UIImage(data: data) {
+                                    self.localProfileImage = Image(uiImage: uiImage)
+                                } else {
+                                    self.localProfileImage = nil
+                                }
 
             }
         }
@@ -178,7 +182,6 @@ struct TelaEditarPerfil: View {
     }
 
     func saveChanges() {
-        // Salva nome, idade, peso, altura
         nomeUsuario = nomeEdit
 
         if let age = Int(idadeEdit) {
