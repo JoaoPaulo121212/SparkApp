@@ -1,94 +1,79 @@
 import SwiftUI
 struct StreakModel: View {
     @Environment(\.dismiss) var dismiss
-    @State private var tipoSequencia: String = "Semanal"
-    let tiposDeStreak = ["Semanal", "Diário"]
-    let diasDestacados: [Int] = [3, 4, 5]
+    @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
+    @State private var mostrarAlertaInfoStreak = false
     var body: some View {
-        ZStack {
-            Color("BackgroundColor")
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 15) {
-                Spacer()
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
+        NavigationView {
+            ZStack {
+                Color("BackgroundColor").edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 35) {
+                    Spacer()
+
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 120))
+                        .foregroundColor(Color("CorBotao"))
+
+                    VStack(spacing: 8) {
+                        Text("Sequência ativa há")
+                            .font(.title2)
+                            .foregroundColor(.white.opacity(0.8))
+                        
+                        Text("\(gerenciadorSessoes.calcularSequenciaAtual()) dias")
+                            .font(.system(size: 52, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                    Spacer()
+                }
+                .padding()
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { dismiss() }) {
                         Image(systemName: "chevron.left")
+                            .foregroundColor(Color.white)
+                            .font(.title3.weight(.medium))
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Sua Sequência")
+                        .font(.headline).bold().foregroundColor(.white)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { mostrarAlertaInfoStreak.toggle() }) {
+                        Image(systemName: "info.circle")
                             .foregroundColor(.white)
-                            .bold()
-                    }
-                    
-                    Spacer()
-                    Text("Sua sequência")
-                        .foregroundColor(.white)
-                        .font(.title2)
-                        .bold()
-                    Spacer()
-                }
-                .padding(.horizontal)
-                Menu {
-                    ForEach(tiposDeStreak, id: \.self) { tipo in
-                        Button(action: {
-                            tipoSequencia = tipo
-                        }) {
-                            Text(tipo)
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Text(tipoSequencia)
-                            .font(.subheadline)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color(.gray).opacity(0.5))
-                            .cornerRadius(5)
-                            .foregroundColor(.white)
-                    }
-                    .padding(.leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                ScrollView {
-                    VStack(spacing: 24) {
-                        CalendarioView(nomeMes: "Maio", totalDias: 31, diasDestacados: diasDestacados)
-                        CalendarioView(nomeMes: "Junho", totalDias: 30, diasDestacados: [])
+                            .font(.title3)
                     }
                 }
-            .padding()
-        }
-    }
-}
-struct CalendarioView: View {
-        let nomeMes: String
-        let totalDias: Int
-        let diasDestacados: [Int]
-        let colunas = Array(repeating: GridItem(.flexible()), count: 7)
-        
-        var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(nomeMes)
-                    .foregroundColor(.white)
-                    .bold()
-                    .font(.title3)
-                    .padding(.horizontal)
-                
-                LazyVGrid(columns: colunas, spacing: 12) {
-                    ForEach(1...totalDias, id: \.self) { dia in
-                        Text("\(dia)")
-                            .frame(width: 30, height: 30)
-                            .background(diasDestacados.contains(dia) ? Color("CorBotao") : Color.clear)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
-                            .font(.subheadline)
-                    }
-                }
-                .padding(.horizontal)
+            }
+            .alert("Ativação da Sequência", isPresented: $mostrarAlertaInfoStreak) {
+                Button("Entendido", role: .cancel) { mostrarAlertaInfoStreak = false }
+            } message: {
+                Text("Para ativar um dia na sua sequência, você deve concluir individualmente todas as diferentes sessões de treino que você configurou, ao longo dos seus respectivos dias de treino.")
             }
         }
+        .accentColor(Color("CorBotao"))
+    }
+}
+struct StreakModel_PreviewWrapper_v2: View {
+    @StateObject var mockGerenciador: GerenciadorSessoesViewModel
+    init() {
+        let manager = GerenciadorSessoesViewModel()
+        let cal = Calendar.current
+        let hoje = cal.startOfDay(for: Date())
+        let ontem = cal.startOfDay(for: cal.date(byAdding: .day, value: -1, to: Date())!)
+        let anteontem = cal.startOfDay(for: cal.date(byAdding: .day, value: -2, to: Date())!)
+        _mockGerenciador = StateObject(wrappedValue: manager)
+    }
+    var body: some View {
+        StreakModel().environmentObject(mockGerenciador)
     }
 }
 #Preview {
-    StreakModel()
+    StreakModel_PreviewWrapper_v2()
+        .preferredColorScheme(.dark)
 }

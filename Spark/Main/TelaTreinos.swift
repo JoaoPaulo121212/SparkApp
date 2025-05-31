@@ -1,115 +1,122 @@
 import SwiftUI
-
 struct TelaTreinos: View {
     @State private var streakPresented = false
-
-    struct Treino: Identifiable {
-        let id = UUID()
+    @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
+    struct TreinoDisplayItem: Identifiable {
+        let id: UUID
         let nome: String
-        let view: (Binding<() -> Void>) -> AnyView
+        let viewDestinationFactory: () -> AnyView
     }
-
-    @State private var treinos: [Treino] = []
-    @State private var concluirTreinoCallback: () -> Void = {}
-
+    @State private var treinosParaExibir: [TreinoDisplayItem] = []
+    var treinoConcluidoHoje: Bool {
+        if let ultimaSessaoTS = gerenciadorSessoes.dataUltimaSessaoIndividualConcluidaTS {
+            return Calendar.current.isDateInToday(Date(timeIntervalSinceReferenceDate: ultimaSessaoTS))
+        }
+        return false
+    }
+    var podeTreinarProximaSessaoDoCiclo: Bool {
+        return !treinoConcluidoHoje
+    }
     var body: some View {
         NavigationStack {
             ZStack {
-                Color("BackgroundColor")
-                    .edgesIgnoringSafeArea(.all)
-
-                VStack(alignment: .leading) {
-                    Spacer()
-
+                Color("BackgroundColor").edgesIgnoringSafeArea(.all)
+                VStack(alignment: .leading, spacing: 20) {
                     HStack {
+                        
                         Text("Treino de hoje")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.white)
+                            .font(.title).bold().foregroundColor(.white)
                         Spacer()
-                        Button {
-                            streakPresented = true
-                        } label: {
+                        Button { streakPresented = true } label: {
                             Image(systemName: "flame")
-                                .foregroundColor(Color("CorBotao"))
-                                .font(.system(size: 25))
-                            
+                                .foregroundColor(Color("CorBotao")).font(.title2)
                         }
                     }
-                    .padding(.horizontal)
-
-                    if let treinoAtual = treinos.first {
-                        NavigationLink(destination: treinoAtual.view($concluirTreinoCallback)) {
+                    .padding(.horizontal).padding(.top, 30)
+                    ScrollView() {
+                        treinoAtualSectionView()
+                            .padding(.horizontal)
+                            .padding(.bottom, 15)
+                        Text("Resto do conteúdo comentado...")
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                }
+            }
+                .sheet(isPresented: $streakPresented) {
+                    StreakModel()
+                        .environmentObject(gerenciadorSessoes)
+                        .interactiveDismissDisabled(true)
+                }
+                .navigationBarHidden(true)
+                .onAppear { carregarTreinosParaExibicao() }
+            }
+        
+    }
+    @ViewBuilder
+    private func treinoAtualSectionView() -> some View {
+        if let treinoAtual = treinosParaExibir.first {
+            if podeTreinarProximaSessaoDoCiclo {
+                NavigationLink(destination: treinoAtual.viewDestinationFactory()) {
                             CardTreino(titulo: treinoAtual.nome)
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .padding(.horizontal)
-                        .padding(.bottom, 30)
-                    }
-
-                    Text("Próximos Treinos")
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding(.horizontal)
-                        .padding(.bottom, 10)
-
-                    ScrollView {
-                        VStack(spacing: 25) {
-                            ForEach(treinos.dropFirst()) { treino in
-                                NavigationLink(destination: treino.view($concluirTreinoCallback)) {
-                                    CardTreino(titulo: treino.nome)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-
-                    Spacer()
-                }
             }
-            .sheet(isPresented: $streakPresented) {
-                StreakModel()
+        } else {
+            VStack(spacing: 8) {
+                Text("Sessão de hoje já concluída!")
+                    .font(.headline).foregroundColor(Color("CorBotao"))
+                Text("Volte amanhã para continuar sua sequência!")
+                    .font(.subheadline).foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
             }
-            .navigationBarHidden(true)
-            .onAppear {
-                if treinos.isEmpty {
-                    carregarTreinos()
-                }
-                concluirTreinoCallback = {
-                    concluirTreino()
-                }
-            }
+            .padding().frame(maxWidth: .infinity)
+            .background(Color.gray.opacity(0.15)).cornerRadius(12)
         }
     }
-
-    func concluirTreino() {
-        guard !treinos.isEmpty else { return }
-        let treinoConcluido = treinos.removeFirst()
-        treinos.append(treinoConcluido)
-    }
-
-    func carregarTreinos() {
-        treinos = [
-            Treino(nome: "Treino A", view: { concluir in
-                AnyView(TreinoAView(concluirTreino: concluir))
-            }),
-            Treino(nome: "Treino B", view: { concluir in
-                AnyView(TreinoBView(concluirTreino: concluir))
-            }),
-            Treino(nome: "Treino C", view: { concluir in
-                AnyView(TreinoCView(concluirTreino: concluir))
-            }),
-//            Treino(nome: "Treino D", view: { concluir in
-//                AnyView(TreinoDView(concluirTreino: concluir))
-//            })
-        ]
+    
+    func carregarTreinosParaExibicao() {
+        treinosParaExibir = []
+        let todasAsSessoes = gerenciadorSessoes.sessoesDeTreinoSalvas
+        let concluidasNesteCiclo = gerenciadorSessoes.sessoesConcluidasNesteCicloSet
+        
+        guard !todasAsSessoes.isEmpty else {
+            print("TelaTreinos: Nenhuma sessão de treino salva no gerenciador para exibir.")
+            self.treinosParaExibir = []
+            return
+        }
+        var proximasSessoes: [SessaoDeTreino] = []
+        var jaFeitasNesteCiclo: [SessaoDeTreino] = []
+        for sessao in todasAsSessoes {
+            if concluidasNesteCiclo.contains(sessao.id) {
+                jaFeitasNesteCiclo.append(sessao)
+            } else {
+                proximasSessoes.append(sessao)
+            }
+        }
+        let sessoesOrdenadasParaDisplay = proximasSessoes + jaFeitasNesteCiclo
+        treinosParaExibir = sessoesOrdenadasParaDisplay.map { sessao in
+            let acaoConcluirParaEstaSessao: () -> Void = {
+                if !self.treinoConcluidoHoje {
+                    gerenciadorSessoes.registrarSessaoIndividualConcluida(
+                        idSessaoConcluida: sessao.id,
+                        dataConclusao: Date()
+                    )
+                } else {
+                    print("TelaTreinos: Tentativa de concluir sessão via callback, mas já treinou hoje.")
+                }
+            }
+            return TreinoDisplayItem(
+                id: sessao.id,
+                nome: sessao.nomeSessao,
+                viewDestinationFactory: { AnyView(ExecucaoSessaoView(sessao: sessao, concluirAcao: acaoConcluirParaEstaSessao)) }
+            )
+        }
+        print("TelaTreinos: Treinos para exibir atualizados: \(treinosParaExibir.map { $0.nome })")
     }
 }
-
-
 #Preview {
     TelaTreinos()
+        .environmentObject(GerenciadorSessoesViewModel())
         .preferredColorScheme(.dark)
 }

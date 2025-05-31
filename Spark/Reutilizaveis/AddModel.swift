@@ -1,30 +1,21 @@
-// Arquivo: AddModel.swift
 import SwiftUI
-
 struct AddModel: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
-
-    // MARK: - State Variables
-    @State var idSessaoEditando: UUID? = nil // Removido 'private' para acesso da extensão
-    @State var nomeSessaoAtual: String = ""   // Removido 'private'
-    @State var exerciciosSessaoAtual: [ExercicioNaSessao] = [] // Removido 'private'
-
-    @State var showAlertInfo = false // Removido 'private'
-    @State var showFeedbackAlert = false // Removido 'private'
-    @State var feedbackAlertMessage = "" // Removido 'private'
-    @State var feedbackAlertTitle = "Aviso" // Removido 'private'
-
-    @State var modoCriacaoEdicaoAtivo = false // Removido 'private'
-    @State var nomeSessaoInteragido = false // Removido 'private'
-
-    // MARK: - UI Constants
+    @State var idSessaoEditando: UUID? = nil
+    @State var nomeSessaoAtual: String = ""
+    @State var exerciciosSessaoAtual: [ExercicioNaSessao] = []
+    @State var showAlertInfo = false
+    @State var showFeedbackAlert = false
+    @State var feedbackAlertMessage = ""
+    @State var feedbackAlertTitle = "Aviso"
+    @State var modoCriacaoEdicaoAtivo = false
+    @State var nomeSessaoInteragido = false
     let textFieldPrincipalBackgroundColor = Color.gray.opacity(0.25)
     let placeholderColor = Color.gray.opacity(0.6)
     let corBotaoPrincipal = Color("CorBotao")
     let corTextoPrincipal = Color.white
     let corTextoSecundario = Color.gray
-
     var body: some View {
         NavigationView {
             ZStack {
@@ -92,7 +83,6 @@ struct AddModel: View {
         }
         .accentColor(corBotaoPrincipal)
     }
-
     @ViewBuilder
     private func editorDeSessaoView() -> some View {
         VStack(spacing: 15) {
@@ -124,20 +114,17 @@ struct AddModel: View {
                      nomeSessaoInteragido = true
                  }
             }
-
             if !exerciciosSessaoAtual.isEmpty {
                 HStack {
                     Text("SÉRIE").modifier(CabecalhoSerieStyle())
                     Text("PESO").modifier(CabecalhoSerieStyle(alignment: .center))
                     Text("REPS").modifier(CabecalhoSerieStyle(alignment: .center))
                     Text("DESCANSO").modifier(CabecalhoSerieStyle(alignment: .center))
-                    // O Spacer para o botão menos foi removido do cabeçalho
                 }
                 .padding(.horizontal)
                 .padding(.top, 10)
                 .padding(.bottom, 5)
             }
-            
             List {
                 ForEach($exerciciosSessaoAtual) { $itemSessao in
                     Section(header:
@@ -152,7 +139,6 @@ struct AddModel: View {
                         .onDelete { offsets in
                             excluirSerieDoExercicioPorSwipe(exercicioId: itemSessao.id, at: offsets)
                         }
-                        
                         Button(action: { adicionarSerie(a: itemSessao.id) }) {
                             HStack { Image(systemName: "plus.circle.fill"); Text("Adicionar Série") }
                                 .font(.caption.bold()).foregroundColor(corBotaoPrincipal)
@@ -180,7 +166,6 @@ struct AddModel: View {
             }.padding([.horizontal, .bottom])
         }
     }
-
     @ViewBuilder
     private func listaDeSessoesView() -> some View {
          VStack(spacing: 0) {
@@ -223,7 +208,6 @@ struct AddModel: View {
         }
     }
 }
-
 #Preview {
     NavigationView {
         AddModel()

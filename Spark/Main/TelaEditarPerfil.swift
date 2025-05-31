@@ -120,7 +120,7 @@ struct TelaEditarPerfil: View {
                                 )
 
 
-                            Text("Altura (em metros):")
+                            Text("Altura (em cm):")
                                 .foregroundColor(corTextoPrincipal)
                                 .font(.footnote)
                                 .padding(.top, 10)
