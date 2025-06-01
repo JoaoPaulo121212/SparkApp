@@ -14,16 +14,13 @@ struct DetalhesTreinoView: View {
                         .font(.largeTitle)
                         .bold()
                         .foregroundColor(.white)
-                    
                     Spacer()
-                    
-                    // MARK: - Botão de Lápis com NavigationLink para AddModel
-                    NavigationLink(destination: AddModel()) {
-                        Image(systemName: "square.and.pencil")
-                            .resizable()
-                            .frame(width: 25, height: 25) 
-                            .foregroundColor(.white)
-                    }
+//                    NavigationLink(destination: AddModel()) {
+//                        Image(systemName: "square.and.pencil")
+//                            .resizable()
+//                            .frame(width: 25, height: 25) 
+//                            .foregroundColor(.white)
+//                    }
                 }
 
                 ForEach(exercicios, id: \.self) { exercicio in

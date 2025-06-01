@@ -1,14 +1,5 @@
-// Arquivo: DadosTemplatesTreino.swift
 import Foundation
 
-// Usaremos os exercícios do DadosExerciciosLocais.swift.
-// Certifique-se de que 'dadosExerciciosLocais' esteja acessível ou copie os necessários aqui.
-// Para este exemplo, vou assumir que temos alguns exercícios em dadosExerciciosLocais.
-// Se dadosExerciciosLocais não estiver globalmente acessível, o senhor precisará
-// instanciar ou acessar de alguma forma. Idealmente, seria uma fonte única de exercícios.
-
-// Função auxiliar para encontrar um exercício local pelo nome (apenas para exemplo)
-// Na prática, o senhor pode querer usar IDs ou uma forma mais robusta de referenciar.
 func encontrarExercicio(nome: String) -> ExercicioLocal? {
     return dadosExerciciosLocais.first(where: { $0.nome.lowercased() == nome.lowercased() })
 }
@@ -25,8 +16,6 @@ let dadosTemplates: [TemplatePlanoDeTreino] = [
                 ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Desenvolvimento Militar com Barra (em pé)") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-15", peso: "--", descanso: "60s")]),
                 ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Prancha Frontal") ?? dadosExerciciosLocais[4], series: [SerieDetalhe(numeroSerie: 1, reps: "3x30-60s", peso: "Corpo", descanso: "60s")])
             ]),
-            // O ideal é que Treino B e C sejam cópias do Treino A para um iniciante full-body,
-            // ou tenham pequenas variações. Para este exemplo, vou simplificar.
             SessaoDeTreino(nomeSessao: "Treino B (Full Body)", exercicios: [ /* Similar ao Treino A */ ]),
             SessaoDeTreino(nomeSessao: "Treino C (Full Body)", exercicios: [ /* Similar ao Treino A */ ])
         ]
@@ -51,7 +40,22 @@ let dadosTemplates: [TemplatePlanoDeTreino] = [
             SessaoDeTreino(nomeSessao: "Superior B", exercicios: [ /* Variação do Superior A */ ]),
             SessaoDeTreino(nomeSessao: "Inferior B", exercicios: [ /* Variação do Inferior A */ ])
         ]
-    )
+    ),
+    TemplatePlanoDeTreino(
+        nomeTemplate: "Emagrecimento",
+        descricao: "Um treino ",
+        sessoesDoTemplate: [
+            SessaoDeTreino(nomeSessao: "Treino A (Full Body)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Agachamento Livre com Barra") ?? dadosExerciciosLocais[0], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
+                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Supino Reto com Barra") ?? dadosExerciciosLocais[1], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
+                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Remada Curvada com Barra") ?? dadosExerciciosLocais[2], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
+                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Desenvolvimento Militar com Barra (em pé)") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-15", peso: "--", descanso: "60s")]),
+                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Prancha Frontal") ?? dadosExerciciosLocais[4], series: [SerieDetalhe(numeroSerie: 1, reps: "3x30-60s", peso: "Corpo", descanso: "60s")])
+            ]),
+            SessaoDeTreino(nomeSessao: "Treino B (Full Body)", exercicios: [ /* Similar ao Treino A */ ]),
+            SessaoDeTreino(nomeSessao: "Treino C (Full Body)", exercicios: [ /* Similar ao Treino A */ ])
+        ]
+    ),
 ]
 
 // NOTA: A função 'encontrarExercicio' e o uso de 'dadosExerciciosLocais[0]' são placeholders.

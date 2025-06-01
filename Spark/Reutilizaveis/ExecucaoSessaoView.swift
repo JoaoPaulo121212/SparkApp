@@ -14,10 +14,6 @@ struct ExecucaoSessaoView: View {
             Color("BackgroundColor")
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                Text("Executando: \(sessao.nomeSessao)")
-                    .font(.largeTitle)
-                    .foregroundColor(corTextoPrincipal)
-                    .padding()
                 Text("Exercícios: \(sessao.exercicios.count)")
                     .foregroundColor(corTextoSecundario)
                     .padding(.bottom)
@@ -57,7 +53,7 @@ struct ExecucaoSessaoView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button { dismiss() } label: {
-                    Image(systemName: "chevron.left").foregroundColor(corBotaoPrincipal)
+                    Image(systemName: "chevron.left").foregroundColor(.white)
                 }
             }
         }

@@ -23,10 +23,6 @@ struct CardTreinoEditavel: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.white.opacity(0.1))
                 .cornerRadius(12)
-
-//                Image(systemName: "pencil")
-//                    .foregroundColor(.white)
-//                    .padding(10)
             }
         }
         .buttonStyle(PlainButtonStyle()) // remove animação padrão do botão

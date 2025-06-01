@@ -3,6 +3,20 @@ import Foundation
 let dadosExerciciosLocais: [ExercicioLocal] = [
     // --- PEITO ---
     ExercicioLocal(
+        nome: "Supino Reto na máquina",
+        grupoMuscular: "Peito",
+        musculoPrincipal: "Peitoral Maior (porção média)",
+        musculosSecundarios: ["Deltoide Anterior", "Tríceps"],
+        equipamento: "Máquina de supino reto",
+        instrucoes: [
+            "Apoie-se no banco com as pernas afastadas e apoie bem os pes no chao no chão.",
+            "Contraia as escapulas e não solte até o fim da série",
+            "Faça força com os pés para baixo. irá te dar mais força durante sua execução.",
+        ],
+        observacoes: "Evite que seus ombros subam durante a execução.",
+        gifUrlLocal: nil
+    ),
+    ExercicioLocal(
         nome: "Supino Reto com Barra",
         grupoMuscular: "Peito",
         musculoPrincipal: "Peitoral Maior (porção média)",

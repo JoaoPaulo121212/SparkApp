@@ -37,8 +37,7 @@ struct TelaTreinos: View {
                         treinoAtualSectionView()
                             .padding(.horizontal)
                             .padding(.bottom, 15)
-                        Text("Resto do conteúdo comentado...")
-                            .foregroundColor(.white)
+                        
                         Spacer()
                     }
                 }
