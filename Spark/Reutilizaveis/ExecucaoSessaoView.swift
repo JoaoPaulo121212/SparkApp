@@ -3,6 +3,7 @@ import SwiftUI
 struct ExecucaoSessaoView: View {
     let sessao: SessaoDeTreino
     var concluirAcao: () -> Void
+    let mostrarBotaoConcluir: Bool // Este parâmetro controlará a visibilidade do botão
     @Environment(\.dismiss) var dismiss
 
     let corBotaoPrincipal = Color("CorBotao")
@@ -36,15 +37,19 @@ struct ExecucaoSessaoView: View {
                 .scrollContentBackground(.hidden)
 
                 Spacer()
-                Button("Concluir Sessão") {
-                    concluirAcao()
-                    dismiss()
+
+                // 1. Adicionar a condição para mostrar o botão
+                if mostrarBotaoConcluir {
+                    Button("Concluir Sessão") {
+                        concluirAcao()
+                        dismiss()
+                    }
+                    .font(.headline).padding()
+                    .foregroundColor(corTextoPrincipal)
+                    .frame(maxWidth: .infinity)
+                    .background(corBotaoPrincipal).cornerRadius(10)
+                    .padding()
                 }
-                .font(.headline).padding()
-                .foregroundColor(corTextoPrincipal)
-                .frame(maxWidth: .infinity)
-                .background(corBotaoPrincipal).cornerRadius(10)
-                .padding()
             }
         }
         .navigationTitle(sessao.nomeSessao)
@@ -59,18 +64,35 @@ struct ExecucaoSessaoView: View {
         }
     }
 }
+
 struct ExecucaoSessaoView_Previews: PreviewProvider {
     static var previews: some View {
+        // Dados mock para o preview
         let exercicioMock = ExercicioLocal(nome: "Supino Teste", grupoMuscular: "Peito", musculoPrincipal: "Peitoral", musculosSecundarios: [], equipamento: "Barra", instrucoes: ["Instrução 1"], observacoes: nil, gifUrlLocal: nil)
         let serieMock = SerieDetalhe(numeroSerie: 1, reps: "10", peso: "50kg", descanso: "60s")
         let exercicioNaSessaoMock = ExercicioNaSessao(exercicioBase: exercicioMock, series: [serieMock])
         let sessaoMock = SessaoDeTreino(nomeSessao: "Treino Mock A", exercicios: [exercicioNaSessaoMock])
         
-        NavigationView { 
-            ExecucaoSessaoView(sessao: sessaoMock, concluirAcao: {
-                print("Sessão Mock Concluída no Preview")
-            })
+        // Preview com o botão de concluir VISÍVEL
+        NavigationView {
+            ExecucaoSessaoView(
+                sessao: sessaoMock,
+                concluirAcao: { print("Sessão Mock Concluída no Preview (Botão Visível)") },
+                mostrarBotaoConcluir: true // 2. Adicionar o parâmetro no preview
+            )
             .preferredColorScheme(.dark)
+            .previewDisplayName("Botão Concluir Visível")
+        }
+
+        // Preview com o botão de concluir INVISÍVEL
+        NavigationView {
+            ExecucaoSessaoView(
+                sessao: sessaoMock,
+                concluirAcao: { /* Esta ação não seria chamada se o botão está invisível */ },
+                mostrarBotaoConcluir: false // 2. Adicionar o parâmetro no preview
+            )
+            .preferredColorScheme(.dark)
+            .previewDisplayName("Botão Concluir Invisível")
         }
     }
 }
