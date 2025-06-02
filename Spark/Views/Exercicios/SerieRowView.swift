@@ -1,11 +1,9 @@
 import SwiftUI
 
 struct SerieRowView: View {
-    @Binding var serie: SerieDetalhe // SerieDetalhe de Models.swift
-
-    // Cores e Placeholders
+    @Binding var serie: SerieDetalhe 
     let placeholderColor = Color.gray.opacity(0.6)
-    let corTextoPrincipal = Color.white // Definindo para uso local
+    let corTextoPrincipal = Color.white
 
     var body: some View {
         HStack(spacing: 8) {
@@ -17,7 +15,7 @@ struct SerieRowView: View {
                       prompt: Text(serie.peso.isEmpty || serie.peso == "--" ? "-- kg" : serie.peso)
                                 .foregroundColor(placeholderColor)
             )
-            .modifier(TextFieldEditorSerieStyle()) // TextFieldEditorSerieStyle.swift
+            .modifier(TextFieldEditorSerieStyle())
             .onTapGesture { if serie.peso == "--" { serie.peso = "" } }
 
             TextField("", text: $serie.reps,
@@ -33,9 +31,7 @@ struct SerieRowView: View {
             )
             .modifier(TextFieldEditorSerieStyle())
             .onTapGesture { if serie.descanso == "2min" { serie.descanso = "" } }
-            
-            // NENHUM BOTÃO DE DELETAR AQUI
         }
-        .padding(.vertical, 2) // Padding vertical para cada linha de série
+        .padding(.vertical, 2)
     }
 }
