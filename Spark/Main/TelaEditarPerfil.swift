@@ -112,7 +112,7 @@ struct TelaEditarPerfil: View {
                                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                                 )
                         }
-                        .padding(.horizontal, 25
+                        .padding(.horizontal, 25)
                         Button(action: {
                             saveChanges()
                         }) {
