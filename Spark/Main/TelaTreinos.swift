@@ -7,7 +7,7 @@ struct TelaTreinos: View {
     struct TreinoDisplayItem: Identifiable {
         let id: UUID
         let nome: String
-        let exercicios: [String] // Nomes dos exercícios para exibição no card
+        let exercicios: [String] 
         let viewDestinationFactory: () -> AnyView
     }
     @State private var treinosParaExibir: [TreinoDisplayItem] = []
@@ -77,8 +77,6 @@ struct TelaTreinos: View {
         if let treinoAtual = treinosParaExibir.first {
             NavigationLink(destination: treinoAtual.viewDestinationFactory()) {
                 VStack(alignment: .leading, spacing: 10) {
-                    // CardTreino(titulo: treinoAtual.nome) // Se você tem um CardTreino customizado
-                    // Se não, um Text simples para o título:
                     Text(treinoAtual.nome)
                         .font(.title2.bold())
                         .foregroundColor(corTextoPrincipal)

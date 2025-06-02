@@ -35,8 +35,9 @@ struct ExercicioNaSessao: Identifiable, Codable {
 }
 
 struct SessaoDeTreino: Identifiable, Codable {
-    var id = UUID()
+    var id: UUID
     var nomeSessao: String
     var exercicios: [ExercicioNaSessao]
-    var dataCriacao: Date = Date()
+    var dataCriacao: Date
+    var isModeloIntocado: Bool?
 }

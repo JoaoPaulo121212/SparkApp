@@ -7,7 +7,7 @@ struct SparkApp: App {
     var body: some Scene {
         WindowGroup {
             if cadastroConcluido {
-              TabViewTeste()
+              WelcomeView()
                     .environmentObject(gerenciadorSessoes)
             }else {
                 WelcomeView()

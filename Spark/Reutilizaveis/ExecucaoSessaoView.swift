@@ -89,9 +89,10 @@ struct ExecucaoSessaoView: View {
                                 Button {
                                     self.itemSheetInstrucoes = exercicioNaSessao.exercicioBase
                                 } label: {
-                                    Image(systemName: "info.circle.fill")
+                                    Image(systemName: "info.circle")
                                         .font(.title2)
-                                        .foregroundColor(corBotaoPrincipal)
+                                        .foregroundColor(.white)
+                                        .padding(.trailing)
                                 }
                                 .padding(.leading, 5)
                                 Text("\(contarSeriesCompletas(para: exercicioNaSessao.id))/\(exercicioNaSessao.series.count)")
@@ -127,7 +128,7 @@ struct ExecucaoSessaoView: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(todasSeriesCompletas(para: exercicioNaSessao.id) ? Color.red : Color.clear, lineWidth: 2)
+                                .stroke(todasSeriesCompletas(para: exercicioNaSessao.id) ? Color("CorBotao") : Color.clear, lineWidth: 2)
                         )
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                         .listRowSeparator(.hidden)
