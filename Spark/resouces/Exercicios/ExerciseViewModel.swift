@@ -5,7 +5,7 @@ class ExerciseViewModel: ObservableObject {
     
     @Published var exerciciosExibidos: [ExercicioLocal] = []
     @Published var isLoading: Bool = false
-    @Published var alertMessage: String? = nil //para futuras mensagens de erro, caso necessário
+    @Published var alertMessage: String? = nil 
 
     private let todosExercicios: [ExercicioLocal] = dadosExerciciosLocais
 

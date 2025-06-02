@@ -53,7 +53,7 @@ struct StreakModel: View {
             .alert("Ativação da Sequência", isPresented: $mostrarAlertaInfoStreak) {
                 Button("Entendido", role: .cancel) { mostrarAlertaInfoStreak = false }
             } message: {
-                Text("Para ativar um dia na sua sequência, você deve concluir individualmente todas as diferentes sessões de treino que você configurou, ao longo dos seus respectivos dias de treino.")
+                Text("Para ativar um dia na sua sequência, você deve concluir individualmente todas as diferentes sessões de treino que você criou, ao longo dos seus dias de treino.")
             }
         }
         .accentColor(Color("CorBotao"))

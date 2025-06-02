@@ -42,7 +42,7 @@ extension AddModel {
         if exerciciosSessaoAtual.isEmpty {
             feedbackAlertTitle = "Sessão Vazia"; feedbackAlertMessage = "Adicione pelo menos um exercício."; showFeedbackAlert = true; return
         }
-        if gerenciadorSessoes.salvarOuAtualizarSessao(idSessao: idSessaoEditando, nome: nomeFinalParaSalvar, exercicios: exerciciosSessaoAtual) {
+        if gerenciadorSessoes.salvarOuAtualizarSessao(idSessao: idSessaoEditando, nome: nomeFinalParaSalvar, exercicios: exerciciosSessaoAtual)  {
             feedbackAlertTitle = "Sucesso!"
             feedbackAlertMessage = "Sessão '\(nomeFinalParaSalvar)' foi salva."
             modoCriacaoEdicaoAtivo = false
@@ -72,49 +72,17 @@ extension AddModel {
             exerciciosSessaoAtual[index].series.append(SerieDetalhe(numeroSerie: proximoNumeroSerie))
         }
     }
-    func excluirSerieDoExercicioPorSwipe(exercicioId: UUID, at offsets: IndexSet) {
-            // Encontra o índice do exercício no array @State exerciciosSessaoAtual
-            if let indexExercicio = self.exerciciosSessaoAtual.firstIndex(where: { $0.id == exercicioId }) {
-                
-                // Cria uma cópia mutável do exercício para modificar suas séries
-                var exercicioModificado = self.exerciciosSessaoAtual[indexExercicio]
-                
-                // Remove as séries pelos offsets fornecidos pelo swipe
-                exercicioModificado.series.remove(atOffsets: offsets)
-                
-                // VERIFICA SE O EXERCÍCIO FICOU SEM SÉRIES
-                if exercicioModificado.series.isEmpty {
-                    // Se sim, remove o exercício inteiro da sessão atual
-                    self.exerciciosSessaoAtual.remove(at: indexExercicio)
-                    print("Exercício '\(exercicioModificado.exercicioBase.nome)' removido da sessão pois todas as suas séries foram excluídas por swipe.")
-                    
-                    // Opcional: Feedback ao usuário de que o exercício foi removido
-                    self.feedbackAlertTitle = "Exercício Removido"
-                    self.feedbackAlertMessage = "'\(exercicioModificado.exercicioBase.nome)' foi removido pois não possuía mais séries."
-                    self.showFeedbackAlert = true
-                    return // Sai da função pois o exercício foi removido
-                }
-                
-                // Se ainda há séries, renumera as séries restantes para este exercício
-                for i in 0..<exercicioModificado.series.count {
-                    exercicioModificado.series[i].numeroSerie = i + 1
-                }
-                
-                // Atualiza o exercício no array @State principal
-                self.exerciciosSessaoAtual[indexExercicio] = exercicioModificado
-                print("Série(s) removida(s) por swipe do exercício: \(exercicioModificado.exercicioBase.nome)")
-            }
-        }
-    func excluirExercicioDaSessao(at offsets: IndexSet) {
-            
+    func excluirExercicioDaSessao(at offsets: IndexSet) { // Definição da função ausente
             exerciciosSessaoAtual.remove(atOffsets: offsets)
-            print("Exercício(s) na posição \(offsets) removido(s) da sessão atual.")
-            
-            // Se não houver mais exercícios, e estivermos criando uma nova sessão,
-            // podemos querer resetar o nome da sessão para o placeholder, se o usuário ainda não o editou.
-            if exerciciosSessaoAtual.isEmpty && idSessaoEditando == nil && !nomeSessaoInteragido {
-                nomeSessaoAtual = gerarNomeSessaoPlaceholderCalculado()
-                // (Assumindo que gerarNomeSessaoPlaceholderCalculado() está em AddModel+Helpers.swift)
-            }
         }
+    func excluirSerieDoExercicioPorSwipe(exercicioId: UUID, at offsets: IndexSet) {
+        if let indexExercicio = self.exerciciosSessaoAtual.firstIndex(where: { $0.id == exercicioId }) {
+            var exercicioModificado = self.exerciciosSessaoAtual[indexExercicio]
+            exercicioModificado.series.remove(atOffsets: offsets)
+            for i in 0..<exercicioModificado.series.count {
+                exercicioModificado.series[i].numeroSerie = i + 1
+            }
+            self.exerciciosSessaoAtual[indexExercicio] = exercicioModificado
+        }
+    }
 }

@@ -6,13 +6,15 @@ struct SparkApp: App {
     @StateObject private var gerenciadorSessoes = GerenciadorSessoesViewModel()
     var body: some Scene {
         WindowGroup {
-//            if cadastroConcluido {
-//              TabViewTeste()
-//            }else {
-//                WelcomeView()
-//            }
-            WelcomeView()
-                .environmentObject(gerenciadorSessoes)
+            if cadastroConcluido {
+              TabViewTeste()
+                    .environmentObject(gerenciadorSessoes)
+            }else {
+                WelcomeView()
+                    .environmentObject(gerenciadorSessoes)
+            }
+//            WelcomeView()
+//                .environmentObject(gerenciadorSessoes)
         }
     }
 }

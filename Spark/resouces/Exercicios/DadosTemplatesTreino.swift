@@ -1,64 +1,123 @@
 import Foundation
 
-func encontrarExercicio(nome: String) -> ExercicioLocal? {
+
+// Função auxiliar para encontrar ExercicioLocal pelo nome (mantida como você criou, case-insensitive)
+func encontrarExercicioLocal(nome: String) -> ExercicioLocal? {
     return dadosExerciciosLocais.first(where: { $0.nome.lowercased() == nome.lowercased() })
+}
+
+// Função auxiliar para parsear strings de séries e criar objetos SerieDetalhe
+func parseSeries(fromString repString: String, pesoPadrao: String, descansoPadrao: String) -> [SerieDetalhe] {
+    var seriesDetalhadas: [SerieDetalhe] = []
+    
+    // Tenta extrair o número de séries e as repetições
+    // Ex: "3x10-15", "4x8", "3xAMRAP"
+    let components = repString.lowercased().components(separatedBy: "x")
+    
+    guard components.count == 2, let numeroDeSeries = Int(components[0]) else {
+        // Se o formato não for "NxREPS", assume 1 série com a string original de reps
+        // Ou você pode optar por retornar um array vazio ou logar um erro.
+        // Por ora, vamos criar uma única série se o parse falhar em "Nx".
+        print("⚠️ Aviso: Formato de reps não reconhecido para parse de múltiplas séries: '\(repString)'. Criando como 1 série.")
+        seriesDetalhadas.append(SerieDetalhe(numeroSerie: 1, reps: repString, peso: pesoPadrao, descanso: descansoPadrao))
+        return seriesDetalhadas
+    }
+    
+    let repsParaCadaSerie = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
+    
+    for i in 1...numeroDeSeries {
+        seriesDetalhadas.append(SerieDetalhe(numeroSerie: i, reps: repsParaCadaSerie, peso: pesoPadrao, descanso: descansoPadrao))
+    }
+    
+    return seriesDetalhadas
 }
 
 let dadosTemplates: [TemplatePlanoDeTreino] = [
     TemplatePlanoDeTreino(
-        nomeTemplate: "Push/Legs/Pull",
-        descricao: "Um treino full-body focado em movimentos compostos básicos, ideal para quem está começando.",
+        nomeTemplate: "Emagrecimento Semanal (ABC)",
+        objetivoAssociado: "Emagrecimento",
+        descricao: "Treino dividido em três sessões (A, B, C) com foco em alta queima calórica, utilizando exercícios compostos e alguns isoladores para manutenção da massa magra. Repita o ciclo ABC conforme sua agenda, idealmente com dias de descanso ou cardio leve entre eles.",
         sessoesDoTemplate: [
-            SessaoDeTreino(nomeSessao: "Treino A (Full Body)", exercicios: [
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Agachamento Livre com Barra") ?? dadosExerciciosLocais[0], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Supino Reto com Barra") ?? dadosExerciciosLocais[1], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Remada Curvada com Barra") ?? dadosExerciciosLocais[2], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Desenvolvimento Militar com Barra (em pé)") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-15", peso: "--", descanso: "60s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Prancha Frontal") ?? dadosExerciciosLocais[4], series: [SerieDetalhe(numeroSerie: 1, reps: "3x30-60s", peso: "Corpo", descanso: "60s")])
-            ]),
-            SessaoDeTreino(nomeSessao: "Treino B (Full Body)", exercicios: [ /* Similar ao Treino A */ ]),
-            SessaoDeTreino(nomeSessao: "Treino C (Full Body)", exercicios: [ /* Similar ao Treino A */ ])
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino A – Peito, Ombros e Tríceps (Emagrecimento)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Supino Reto com Halteres")!, series: parseSeries(fromString: "3x10-15", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Crossover (Polia Alta)")!, series: parseSeries(fromString: "3x12-15", pesoPadrao: "--", descansoPadrao: "45s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Desenvolvimento com Halteres")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Elevação Lateral com Halteres")!, series: parseSeries(fromString: "3x15", pesoPadrao: "--", descansoPadrao: "45s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Tríceps Pulley com Corda")!, series: parseSeries(fromString: "3x12-15", pesoPadrao: "--", descansoPadrao: "45s")), // Ajustado reps
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Flexão de Braço Clássica")!, series: parseSeries(fromString: "3xAMRAP", pesoPadrao: "Corpo", descansoPadrao: "60s")) // Usando Flexão Clássica
+            ].compactMap { $0 }, // Remove nil se encontrarExercicioLocal retornar nil (embora aqui usemos '!')
+            dataCriacao: Date() // Data de criação do template
+            ),
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino B – Pernas e Glúteos (Emagrecimento)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Agachamento Livre com Barra")!, series: parseSeries(fromString: "4x10-15", pesoPadrao: "--", descansoPadrao: "75s")), // Ajustado reps
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Leg Press 45°")!, series: parseSeries(fromString: "3x12-15", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado reps
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Cadeira Extensora")!, series: parseSeries(fromString: "3x15-20", pesoPadrao: "--", descansoPadrao: "45s")), // Ajustado reps
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Mesa Flexora")!, series: parseSeries(fromString: "3x15-20", pesoPadrao: "--", descansoPadrao: "45s")), // Ajustado reps
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Elevação Pélvica (Hip Thrust) com Barra")!, series: parseSeries(fromString: "3x15", pesoPadrao: "--", descansoPadrao: "60s"))
+            ].compactMap { $0 },
+            dataCriacao: Date()
+            ),
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino C – Costas, Bíceps e Abdômen (Emagrecimento)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Puxada Alta Frontal (Pulley)")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Baixa (Remada Sentada na Polia)")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Pulldown com Braços Retos (Polia Alta)")!, series: parseSeries(fromString: "3x15", pesoPadrao: "--", descansoPadrao: "45s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Direta com Barra")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "45s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Alternada com Halteres")!, series: parseSeries(fromString: "3x12", pesoPadrao: "--", descansoPadrao: "45s")) // Adicionado
+                // Abdômen pode ser um exercício como "Prancha Frontal" ou adicionado manualmente
+            ].compactMap { $0 },
+            dataCriacao: Date()
+            )
         ]
     ),
+
     TemplatePlanoDeTreino(
-        nomeTemplate: "Hipertrofia - Divisão Superior/Inferior (4x Semana)",
-        descricao: "Foco em ganho de massa muscular com divisão de treino para membros superiores e inferiores.",
+        nomeTemplate: "Hipertrofia Clássica (ABC)",
+        objetivoAssociado: "Ganho de massa muscular",
+        descricao: "Treinamento clássico de hipertrofia com divisão ABC (Peito/Ombro/Tríceps, Pernas, Costas/Bíceps) e foco em exercícios compostos e isoladores para máximo estímulo muscular.",
         sessoesDoTemplate: [
-            SessaoDeTreino(nomeSessao: "Superior A", exercicios: [
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Supino Reto com Halteres") ?? dadosExerciciosLocais[0], series: [SerieDetalhe(numeroSerie: 1, reps: "4x8-10", peso: "--", descanso: "75s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Remada Cavalinho (Barra T ou Adaptador)") ?? dadosExerciciosLocais[1], series: [SerieDetalhe(numeroSerie: 1, reps: "4x8-10", peso: "--", descanso: "75s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Desenvolvimento com Halteres (Sentado ou em Pé)") ?? dadosExerciciosLocais[2], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-12", peso: "--", descanso: "60s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Rosca Direta com Barra") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-12", peso: "--", descanso: "60s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Tríceps Testa com Barra W (ou Reta)") ?? dadosExerciciosLocais[4], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-12", peso: "--", descanso: "60s")])
-            ]),
-            SessaoDeTreino(nomeSessao: "Inferior A", exercicios: [
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Agachamento Livre com Barra") ?? dadosExerciciosLocais[0], series: [SerieDetalhe(numeroSerie: 1, reps: "4x6-10", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Leg Press 45°") ?? dadosExerciciosLocais[1], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-15", peso: "--", descanso: "75s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Mesa Flexora (Isquiotibiais Deitado)") ?? dadosExerciciosLocais[2], series: [SerieDetalhe(numeroSerie: 1, reps: "3x12-15", peso: "--", descanso: "60s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Panturrilha em Pé (Máquina ou Livre)") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "4x15-20", peso: "--", descanso: "45s")])
-            ]),
-            SessaoDeTreino(nomeSessao: "Superior B", exercicios: [ /* Variação do Superior A */ ]),
-            SessaoDeTreino(nomeSessao: "Inferior B", exercicios: [ /* Variação do Inferior A */ ])
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino A – Peito, Ombros e Tríceps (Hipertrofia)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Supino Reto com Barra")!, series: parseSeries(fromString: "4x6-10", pesoPadrao: "--", descansoPadrao: "75-90s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Supino Inclinado com Halteres")!, series: parseSeries(fromString: "3x8-12", pesoPadrao: "--", descansoPadrao: "75s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Crucifixo Reto com Halteres")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Desenvolvimento Militar com Barra (em pé)")!, series: parseSeries(fromString: "4x6-10", pesoPadrao: "--", descansoPadrao: "75s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Elevação Lateral com Halteres")!, series: parseSeries(fromString: "3x12-15", pesoPadrao: "--", descansoPadrao: "45s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Tríceps Testa com Barra W")!, series: parseSeries(fromString: "3x8-12", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Tríceps Pulley com Corda")!, series: parseSeries(fromString: "3x10-15", pesoPadrao: "--", descansoPadrao: "60s")) // Ajustado
+            ].compactMap { $0 },
+            dataCriacao: Date()
+            ),
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino B – Pernas Completas (Hipertrofia)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Agachamento Livre com Barra")!, series: parseSeries(fromString: "4x6-10", pesoPadrao: "--", descansoPadrao: "90s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Leg Press 45°")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "75s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Cadeira Extensora")!, series: parseSeries(fromString: "3x12-15", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Mesa Flexora")!, series: parseSeries(fromString: "3x10-15", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Panturrilha em Pé (Smith ou Máquina de Panturrilha)")!, series: parseSeries(fromString: "4x15-20", pesoPadrao: "--", descansoPadrao: "45s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Panturrilha Sentado (Máquina de Panturrilha Sentada)")!, series: parseSeries(fromString: "4x15-20", pesoPadrao: "--", descansoPadrao: "45s"))
+            ].compactMap { $0 },
+            dataCriacao: Date()
+            ),
+            SessaoDeTreino(id: UUID(), nomeSessao: "Treino C – Costas e Bíceps (Hipertrofia)", exercicios: [
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Barra Fixa (Pegada Pronada)")!, series: parseSeries(fromString: "4xAMRAP", pesoPadrao: "Corpo", descansoPadrao: "90s")), // AMRAP = As Many Reps As Possible
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Curvada com Barra")!, series: parseSeries(fromString: "4x8-10", pesoPadrao: "--", descansoPadrao: "75s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Puxada Alta Frontal (Pulley)")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "75s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Serrote com Halter (Unilateral)")!, series: parseSeries(fromString: "3x10", pesoPadrao: "--", descansoPadrao: "60s")), // Por lado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Direta com Barra")!, series: parseSeries(fromString: "3x8-12", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Alternada com Halteres")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")) // Por lado, ajustado
+            ].compactMap { $0 },
+            dataCriacao: Date()
+            )
         ]
-    ),
-    TemplatePlanoDeTreino(
-        nomeTemplate: "Emagrecimento",
-        descricao: "Um treino ",
-        sessoesDoTemplate: [
-            SessaoDeTreino(nomeSessao: "Treino A (Full Body)", exercicios: [
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Agachamento Livre com Barra") ?? dadosExerciciosLocais[0], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Supino Reto com Barra") ?? dadosExerciciosLocais[1], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Remada Curvada com Barra") ?? dadosExerciciosLocais[2], series: [SerieDetalhe(numeroSerie: 1, reps: "3x8-12", peso: "--", descanso: "90s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Desenvolvimento Militar com Barra (em pé)") ?? dadosExerciciosLocais[3], series: [SerieDetalhe(numeroSerie: 1, reps: "3x10-15", peso: "--", descanso: "60s")]),
-                ExercicioNaSessao(exercicioBase: encontrarExercicio(nome: "Prancha Frontal") ?? dadosExerciciosLocais[4], series: [SerieDetalhe(numeroSerie: 1, reps: "3x30-60s", peso: "Corpo", descanso: "60s")])
-            ]),
-            SessaoDeTreino(nomeSessao: "Treino B (Full Body)", exercicios: [ /* Similar ao Treino A */ ]),
-            SessaoDeTreino(nomeSessao: "Treino C (Full Body)", exercicios: [ /* Similar ao Treino A */ ])
-        ]
-    ),
+    )
+    // Adicione mais TemplatePlanoDeTreino aqui conforme necessário para outros objetivos ou variações
+    // como o "Push/Legs/Pull" ou "Superior/Inferior" que você tinha antes,
+    // adaptando os exercícios e a função parseSeries.
+    // Certifique-se que os nomes dos exercícios em encontrarExercicioLocal()
+    // correspondem EXATAMENTE aos nomes em DadosExerciciosLocais.swift (ignorando maiúsculas/minúsculas).
 ]
 
-// NOTA: A função 'encontrarExercicio' e o uso de 'dadosExerciciosLocais[0]' são placeholders.
-// O senhor precisará de uma maneira robusta de popular os 'exercicioBase' nos seus templates,
-// idealmente buscando de 'dadosExerciciosLocais' por um ID ou nome único e confiável.
-// Para este exemplo, usei nomes e alguns índices como fallback.
+// Nota: As structs SessaoDeTreino, ExercicioNaSessao, SerieDetalhe e ExercicioLocal
+// devem estar definidas em outros lugares do seu projeto.
+// Certifique-se que SessaoDeTreino e ExercicioNaSessao tenham inicializadores que permitam
+// criar instâncias como feito acima (passando id, nome, exercicios, data, etc.).
+// E que SerieDetalhe tenha um inicializador para numeroSerie, reps, peso, descanso.
+// ExercicioLocal é buscado pela função encontrarExercicioLocal.

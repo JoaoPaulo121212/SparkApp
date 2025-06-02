@@ -1,22 +1,9 @@
 import SwiftUI
 
 struct TelaListTreino: View {
-    @State var AddModelPresented = false
-    @AppStorage("objetivoSelecionado") private var objetivoSalvo: String = "Emagrecimento"
-    
+    @State var addModelPresented = false // Para o botão '+'
     @EnvironmentObject private var gerenciadorSessoes: GerenciadorSessoesViewModel
-    let treinosPorObjetivo: [String: [[String]]] = [
-        "Emagrecimento": [
-            ["Supino reto Máquina","Supino inclinado máquina", "Cruxifico máquina", "Elevação frontal", "Elevação lateral" , "Trícepes corda na polia", "Tríceps testa na polia barra W"],
-            ["Corrida", "Agachamento", "Bicicleta"],
-            ["Burpees", "Mountain Climbers", "Jumping Jacks"]
-        ],
-        "Ganho de massa muscular": [
-            ["Supino reto Máquina","Supino inclinado máquina", "Cruxifico máquina", "Elevação frontal", "Elevação lateral" , "Trícepes corda na polia", "Tríceps testa na polia barra W"],
-            ["Agachamento livre","Leg Press 45°", "cadeira extensora","mesa flexora", "cadeira flexora","panturrilha máquina em pé","panturrilha sentado"],
-            ["puxada na barra reta", "remada baixa no triângulo","Pulldown", "remada aberta na maquina", "rosca direta com halteres", "rosca 45°"]
-        ]
-    ]
+    
     let corDeFundoPrincipal = Color("BackgroundColor")
     let corTextoPrincipal = Color.white
 
@@ -34,7 +21,7 @@ struct TelaListTreino: View {
                         Spacer()
                         
                         Button(action: {
-                            AddModelPresented = true
+                            addModelPresented = true
                         }) {
                             Image(systemName: "plus")
                                 .resizable()
@@ -47,64 +34,51 @@ struct TelaListTreino: View {
                     .padding(.top, UIApplication.shared.connectedScenes
                         .compactMap { $0 as? UIWindowScene }
                         .first?.windows.first?.safeAreaInsets.top ?? 0 > 20 ? 15 : 30)
+                    
                     ScrollView {
                         VStack(spacing: 16) {
-                            if !gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty {
-                                
-                                ForEach(gerenciadorSessoes.sessoesDeTreinoSalvas) { sessao in
-                                    
-                                    NavigationLink(destination:
-                                        
-                                        Text("Destino para: \(sessao.nomeSessao)").foregroundColor(.white)
-                                    ) {
-                                        CardTreinoEditavel(
-                                            titulo: sessao.nomeSessao,
-                                            exercicios: sessao.exercicios.map { $0.exercicioBase.nome }
-                                        )
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    .frame(maxWidth: .infinity)
-                                }
-                            } else if let treinosDoObjetivo = treinosPorObjetivo[objetivoSalvo], !treinosDoObjetivo.isEmpty {
-                               
-                                ForEach(Array(treinosDoObjetivo.enumerated()), id: \.offset) { index, exerciciosDoTreinoPreCriado in
-                                    let nomeTreinoPreCriado = "Treino \(Character(UnicodeScalar(65 + index)!))"
-                                    
-                                    NavigationLink(destination:
-                                        Text("Destino para: \(nomeTreinoPreCriado)").foregroundColor(.white)
-                                    ) {
-                                        CardTreinoEditavel(
-                                            titulo: nomeTreinoPreCriado,
-                                            exercicios: exerciciosDoTreinoPreCriado
-                                        )
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    .frame(maxWidth: .infinity)
-                                }
-                            } else {
-                                Text("Nenhum treino disponível.\nDefina um objetivo nas configurações ou crie um treino personalizado no botão '+' acima.")
+                            if gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty {
+                                Text("Nenhum treino personalizado salvo.\nCrie um novo treino no botão '+' acima.")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
-                                    .padding()
+                                    .padding(.vertical, 50)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            } else {
+                                ForEach(gerenciadorSessoes.sessoesDeTreinoSalvas) { sessao in
+                                    // Navega para AddModel para editar a sessão existente
+                                    NavigationLink(destination:
+                                        // Para onde você quer ir ao clicar? Execução ou Edição?
+                                        // Exemplo para editar:
+                                        AddModel(idSessaoEditando: sessao.id) // Passa o ID para AddModel carregar
+                                            .environmentObject(gerenciadorSessoes)
+                                        // Ou para a tela de execução:
+                                        // ExecucaoSessaoView(sessao: sessao, ...)
+                                    ) {
+                                        // Seu CardTreinoEditavel ou similar
+                                        Text("Treino Salvo: \(sessao.nomeSessao)") // Placeholder do card
+                                            .padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color.gray.opacity(0.2))
+                                            .foregroundColor(.white)
+                                            .cornerRadius(10)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
                             }
                         }
                         .padding()
                     }
                 }
             }
-            .sheet(isPresented: $AddModelPresented) {
-                AddModel() // AddModel.swift
+            .sheet(isPresented: $addModelPresented) {
+                AddModel() // Chama AddModel sem parâmetros para criar nova sessão
                     .environmentObject(gerenciadorSessoes)
-                    .interactiveDismissDisabled(true)
+                    .interactiveDismissDisabled(true) // Como você tinha
             }
-           
         }
     }
 }
-
-
 
 #Preview {
     TelaListTreino()

@@ -1,23 +1,18 @@
-// Arquivo: AddModel.swift
 import SwiftUI
 
 struct AddModel: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
 
-    // MARK: - State Variables
-    @State var idSessaoEditando: UUID? = nil // Removido 'private' para acesso da extensão
-    @State var nomeSessaoAtual: String = ""   // Removido 'private'
-    @State var exerciciosSessaoAtual: [ExercicioNaSessao] = [] // Removido 'private'
-
-    @State var showAlertInfo = false // Removido 'private'
-    @State var showFeedbackAlert = false // Removido 'private'
-    @State var feedbackAlertMessage = "" // Removido 'private'
-    @State var feedbackAlertTitle = "Aviso" // Removido 'private'
-
-    @State var modoCriacaoEdicaoAtivo = false // Removido 'private'
-    @State var nomeSessaoInteragido = false // Removido 'private'
-
+    @State var idSessaoEditando: UUID? = nil
+    @State var nomeSessaoAtual: String = ""
+    @State var exerciciosSessaoAtual: [ExercicioNaSessao] = []
+    @State var showAlertInfo = false
+    @State var showFeedbackAlert = false
+    @State var feedbackAlertMessage = ""
+    @State var feedbackAlertTitle = "Aviso"
+    @State var modoCriacaoEdicaoAtivo = false
+    @State var nomeSessaoInteragido = false
 
     // MARK: - UI Constants
     let textFieldPrincipalBackgroundColor = Color.gray.opacity(0.25)
@@ -43,7 +38,9 @@ struct AddModel: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if modoCriacaoEdicaoAtivo {
                         Button(action: cancelarEdicaoOuCriacao) {
-                            Text("Cancelar").foregroundColor(corBotaoPrincipal)
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(corTextoPrincipal)
+                                .imageScale(.large)
                         }
                     } else {
                         Button(action: { dismiss() }) {
@@ -64,7 +61,7 @@ struct AddModel: View {
                         }
                         .foregroundColor(corBotaoPrincipal)
                         .disabled(
-                            (nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && (idSessaoEditando != nil || nomeSessaoInteragido))
+                            (nomeSessaoAtual.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && nomeSessaoInteragido)
                             || exerciciosSessaoAtual.isEmpty
                         )
                     } else {
@@ -88,7 +85,7 @@ struct AddModel: View {
                 }
             }
             .alert(feedbackAlertTitle, isPresented: $showFeedbackAlert) { Button("OK"){} } message: { Text(feedbackAlertMessage) }
-            .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: { showAlertInfo = false }) } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela. Ao clicar no ícone de lista, você pode acessar os templates.") }
+            .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: { showAlertInfo = false }) } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela.") }
         }
         .accentColor(corBotaoPrincipal)
     }
@@ -98,33 +95,25 @@ struct AddModel: View {
         VStack(spacing: 15) {
             TextField(
                 "",
-                text: Binding(
-                    get: { self.nomeSessaoAtual },
-                    set: { newValue in
-                        self.nomeSessaoAtual = newValue
-                        self.nomeSessaoInteragido = true
-                    }
-                ),
+                text: $nomeSessaoAtual,
                 prompt: Text(textoPlaceholderNomeSessao()).foregroundColor(placeholderColor)
             )
+            .onChange(of: nomeSessaoAtual, perform: { _ in nomeSessaoInteragido = true })
             .foregroundColor(corTextoPrincipal)
             .padding()
             .background(textFieldPrincipalBackgroundColor)
             .cornerRadius(10)
             .padding(.horizontal)
-            .padding(.top, 20)
             .onAppear {
-                if idSessaoEditando == nil && !nomeSessaoInteragido {
+                if idSessaoEditando == nil && !nomeSessaoInteragido && nomeSessaoAtual.isEmpty {
                     nomeSessaoAtual = gerarNomeSessaoPlaceholderCalculado()
                 }
             }
              .onTapGesture {
                  if idSessaoEditando == nil && nomeSessaoAtual == gerarNomeSessaoPlaceholderCalculado() && !nomeSessaoInteragido {
                      nomeSessaoAtual = ""
-                     nomeSessaoInteragido = true
                  }
             }
-
             if !exerciciosSessaoAtual.isEmpty {
                 HStack {
                     Text("SÉRIE").modifier(CabecalhoSerieStyle())
@@ -133,47 +122,21 @@ struct AddModel: View {
                     Text("DESCANSO").modifier(CabecalhoSerieStyle(alignment: .center))
                 }
                 .padding(.horizontal)
-                .padding(.top, 10)
-                .padding(.bottom, 5)
             }
-            
             List {
-                ForEach($exerciciosSessaoAtual) { $itemSessao in
-                    Section(header:
-                        Text(itemSessao.exercicioBase.nome)
-                            .font(.title3).bold().foregroundColor(corBotaoPrincipal)
-                            .padding(.vertical, 8).frame(maxWidth: .infinity, alignment: .leading)
-                            .textCase(nil)
-                    ) {
-                        ForEach(itemSessao.series) { serie in
-                                SerieRowView(serie: Binding(
-                                    get: { serie },
-                                    set: { novoValor in
-                                        if let indexExercicio = exerciciosSessaoAtual.firstIndex(where: { $0.id == itemSessao.id }),
-                                           let indexSerie = exerciciosSessaoAtual[indexExercicio].series.firstIndex(where: { $0.id == serie.id }) {
-                                            exerciciosSessaoAtual[indexExercicio].series[indexSerie] = novoValor
-                                        }
-                                    }
-                                ))
-                            }
-                            .onDelete { offsets in
-                                excluirSerieDoExercicioPorSwipe(exercicioId: itemSessao.id, at: offsets)
-                            }
-
-                        
-                        Button(action: { adicionarSerie(a: itemSessao.id) }) {
-                            HStack { Image(systemName: "plus.circle.fill"); Text("Adicionar Série") }
-                                .font(.caption.bold()).foregroundColor(corBotaoPrincipal)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center).padding(.vertical, 6)
-                    }
-                    .listRowInsets(EdgeInsets(top: 5, leading: 10, bottom: 10, trailing: 10))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+                ForEach($exerciciosSessaoAtual) { $itemSessaoBinding in // Renomeado para clareza
+                    ExercicioSessaoRowView(
+                        itemSessao: $itemSessaoBinding,
+                        corBotaoPrincipal: corBotaoPrincipal,
+                        excluirSerieAction: self.excluirSerieDoExercicioPorSwipe,
+                        adicionarSerieAction: self.adicionarSerie
+                    )
                 }
-
+                .onDelete(perform: excluirExercicioDaSessao) // DE AddModel+Actions.swift
             }
-            .listStyle(.plain).background(Color("BackgroundColor")).scrollContentBackground(.hidden)
+            .listStyle(.plain)
+            .background(Color("BackgroundColor"))
+            .scrollContentBackground(.hidden)
 
             NavigationLink(destination: ExerciseListView(
                 aoSelecionarExercicio: { exercicioLocalSelecionado in
@@ -199,7 +162,8 @@ struct AddModel: View {
             } else if gerenciadorSessoes.sessoesDeTreinoSalvas.isEmpty {
                 Spacer()
                 Image(systemName: "figure.strengthtraining.traditional")
-                     .font(.system(size: 70)).foregroundColor(corTextoPrincipal.opacity(0.3)).padding(.bottom)
+                     .font(.system(size: 70)).foregroundColor(corTextoPrincipal.opacity(0.3))
+                     .padding(.bottom)
                 Text("Nenhuma sessão de treino salva.").font(.title3).foregroundColor(corTextoSecundario)
                 Spacer()
             } else {
@@ -210,7 +174,7 @@ struct AddModel: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(sessao.nomeSessao).font(.headline).foregroundColor(corTextoPrincipal)
-                                Text("\(sessao.exercicios.count) exercícios • Criada em: \(formatarData(sessao.dataCriacao))")
+                                Text("\(sessao.exercicios.count) exercícios • Criada em: \(formatarData(sessao.dataCriacao))") 
                                     .font(.caption).foregroundColor(corTextoSecundario)
                             }
                             Spacer()
@@ -220,7 +184,7 @@ struct AddModel: View {
                         .contentShape(Rectangle())
                         .onTapGesture { carregarSessaoParaEdicao(sessao: sessao) }
                         .listRowBackground(Color.gray.opacity(0.15))
-                         .listRowSeparatorTint(Color.gray.opacity(0.3))
+                        .listRowSeparatorTint(Color.gray.opacity(0.3))
                     }
                     .onDelete(perform: gerenciadorSessoes.excluirSessao)
                 }
@@ -232,9 +196,7 @@ struct AddModel: View {
 }
 
 #Preview {
-    NavigationView {
-        AddModel()
-            .environmentObject(GerenciadorSessoesViewModel())
-            .preferredColorScheme(.dark)
-    }
+    AddModel()
+        .environmentObject(GerenciadorSessoesViewModel())
+        .preferredColorScheme(.dark)
 }

@@ -11,7 +11,8 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         instrucoes: [
             "Apoie-se no banco com as pernas afastadas e apoie bem os pes no chao no chão.",
             "Contraia as escapulas e não solte até o fim da série",
-            "Faça força com os pés para baixo. irá te dar mais força durante sua execução.",
+            "Segure os pegadores com uma pegada confortável, empurrando a carga para frente até quase estender os braços.",
+            "Faça força com os pés para baixo. Isso irá te dar mais força durante sua execução.",
         ],
         observacoes: "Evite que seus ombros subam durante a execução.",
         gifUrlLocal: nil
@@ -83,7 +84,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Peck Deck (Voador Peitoral)",
+        nome: "Crucifixo máquina (Peck Deck)",
         grupoMuscular: "Peito",
         musculoPrincipal: "Peitoral Maior (ênfase na adução)",
         musculosSecundarios: [],
@@ -189,21 +190,6 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
             "Empurre o corpo de volta à posição inicial, estendendo os braços e focando na contração do peitoral interno e tríceps."
         ],
         observacoes: "Excelente para ativar o tríceps e a parte central do peito. Se for difícil, faça com os joelhos no chão.",
-        gifUrlLocal: nil
-    ),
-    ExercicioLocal(
-        nome: "Supino na Máquina (Máquina Smith ou Máquina de Peito)",
-        grupoMuscular: "Peito",
-        musculoPrincipal: "Peitoral Maior",
-        musculosSecundarios: ["Deltoide Anterior", "Tríceps"],
-        equipamento: "Máquina Smith ou Máquina de Peito",
-        instrucoes: [
-            "Ajuste o assento da máquina para que a pegada fique na altura do seu peito.",
-            "Sente-se com as costas apoiadas e os pés firmes no chão.",
-            "Segure os pegadores com uma pegada confortável, empurrando a carga para frente até quase estender os braços.",
-            "Retorne a carga lentamente e controladamente até sentir o alongamento no peito."
-        ],
-        observacoes: "Oferece maior estabilidade e segurança, ideal para iniciantes ou para focar na falha muscular.",
         gifUrlLocal: nil
     ),
     ExercicioLocal(
@@ -498,13 +484,13 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Desenvolvimento com Halteres (Sentado ou em Pé)",
+        nome: "Desenvolvimento com Halteres",
         grupoMuscular: "Ombros",
         musculoPrincipal: "Deltoide (ênfase anterior e medial)",
         musculosSecundarios: ["Tríceps", "Trapézio Superior"],
-        equipamento: "Par de Halteres e Banco (opcional)",
+        equipamento: "Par de Halteres e Banco",
         instrucoes: [
-            "Sente-se em um banco com encosto (ou fique em pé) segurando um halter em cada mão na altura dos ombros, palmas voltadas para frente.",
+            "Sente-se em um banco com encosto segurando um halter em cada mão apoie-os em sua coxa, palmas voltadas para você (pegada neutra).",
             "Mantenha o core firme.",
             "Empurre os halteres verticalmente para cima até que os braços estejam quase totalmente estendidos, sem que os halteres se toquem no topo.",
             "Desça os halteres de forma controlada de volta à altura dos ombros."
@@ -668,6 +654,22 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
 
     // --- BÍCEPS ---
     ExercicioLocal(
+        nome: "Rosca martelo",
+        grupoMuscular: "Bíceps",
+        musculoPrincipal: "Bíceps cabeça longa",
+        musculosSecundarios: ["Cabeça longa", "Braquiorradial (Antebraço)"],
+        equipamento: "Halteres ou Corda na Polia",
+        instrucoes: [
+            "Fique em pé com os pés na largura dos ombros, segurando os halteres com pegada neutra (palmas voltadas para você), mãos na largura dos ombros.",
+            "Mantenha os cotovelos fixos ao lado do corpo.",
+            "Flexione os cotovelos, elevando os halteres/corda em direção aos ombros.",
+            "Contraia o bíceps no topo do movimento.",
+            "Desça os halteres/corda de forma controlada até a extensão quase completa dos braços."
+        ],
+        observacoes: "Evite balançar o corpo ou usar impulso. Os halteres podem ser mais confortaveis para os punhos.",
+        gifUrlLocal: nil
+    ),
+    ExercicioLocal(
         nome: "Rosca Direta com Barra",
         grupoMuscular: "Bíceps",
         musculoPrincipal: "Bíceps Braquial",
@@ -684,7 +686,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Rosca Alternada com Halteres (em pé ou sentado)",
+        nome: "Rosca Alternada com Halteres",
         grupoMuscular: "Bíceps",
         musculoPrincipal: "Bíceps Braquial",
         musculosSecundarios: ["Braquial", "Braquiorradial"],
@@ -844,7 +846,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
 
     // --- TRÍCEPS ---
     ExercicioLocal(
-        nome: "Tríceps Testa com Barra W (ou Reta)",
+        nome: "Tríceps Testa com Barra W",
         grupoMuscular: "Tríceps",
         musculoPrincipal: "Tríceps Braquial (todas as cabeças)",
         musculosSecundarios: [],
@@ -906,7 +908,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Tríceps Pulley com Corda (ou Barra Reta)",
+        nome: "Tríceps Pulley com Corda",
         grupoMuscular: "Tríceps",
         musculoPrincipal: "Tríceps Braquial (ênfase na cabeça lateral e medial)",
         musculosSecundarios: [],
@@ -1081,9 +1083,9 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Mesa Flexora (Isquiotibiais Deitado)",
+        nome: "Mesa Flexora",
         grupoMuscular: "Pernas",
-        musculoPrincipal: "Isquiotibiais",
+        musculoPrincipal: "Posterior de coxa",
         musculosSecundarios: ["Panturrilhas", "Glúteos (levemente)"],
         equipamento: "Máquina Flexora Deitada",
         instrucoes: [
@@ -1093,7 +1095,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
             "Contraia os isquiotibiais no topo.",
             "Desça o peso lentamente e de forma controlada."
         ],
-        observacoes: "Isola bem os isquiotibiais.",
+        observacoes: "Isola bem os posterior (parte traseira da coxa).",
         gifUrlLocal: nil
     ),
     ExercicioLocal(
@@ -1116,7 +1118,7 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         nome: "Afundo com Halteres (Passada)",
         grupoMuscular: "Pernas",
         musculoPrincipal: "Quadríceps, Glúteos",
-        musculosSecundarios: ["Isquiotibiais", "Panturrilhas"],
+        musculosSecundarios: ["Posterior de coxa", "Panturrilhas"],
         equipamento: "Par de Halteres",
         instrucoes: [
             "Fique em pé, segurando um halter em cada mão ao lado do corpo.",
@@ -1179,9 +1181,9 @@ let dadosExerciciosLocais: [ExercicioLocal] = [
         gifUrlLocal: nil
     ),
     ExercicioLocal(
-        nome: "Panturrilha Sentado (Máquina de Panturrilha Sentada)",
+        nome: "Panturrilha Sentado",
         grupoMuscular: "Pernas",
-        musculoPrincipal: "Sóleo (Panturrilha)",
+        musculoPrincipal: "Panturrilha",
         musculosSecundarios: [],
         equipamento: "Máquina de Panturrilha Sentada",
         instrucoes: [
