@@ -48,7 +48,6 @@ struct TelaTreinos: View {
                         VStack(alignment: .leading, spacing: 25) {
                             treinoAtualSectionView()
                                 .padding(.horizontal)
-                            
                             if treinosParaExibir.count > 1 {
                                 Text("Próximos treinos")
                                     .font(.title2).bold().foregroundColor(corTextoPrincipal)
@@ -71,7 +70,6 @@ struct TelaTreinos: View {
             .onAppear { carregarTreinosParaExibicao() }
         }
     }
-
     @ViewBuilder
     private func treinoAtualSectionView() -> some View {
         if let treinoAtual = treinosParaExibir.first {

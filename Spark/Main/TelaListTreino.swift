@@ -76,10 +76,12 @@ struct TelaListTreino: View {
             .onAppear {
                 gerenciadorSessoes.atualizarSessoesParaExibir()
             }
+            .navigationTitle("")
         }
+        .navigationTitle("SeuPlano de treino")
+        .navigationBarHidden(true)
     }
 }
-
 #Preview {
     let viewModel = GerenciadorSessoesViewModel()
     if viewModel.objetivoUsuarioSalvo.isEmpty {
@@ -90,8 +92,6 @@ struct TelaListTreino: View {
     } else {
         viewModel.atualizarSessoesParaExibir()
     }
-
-
     return TelaListTreino()
         .preferredColorScheme(.dark)
         .environmentObject(viewModel)

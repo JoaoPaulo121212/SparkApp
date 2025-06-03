@@ -15,26 +15,23 @@ struct DetalhesTreinoView: View {
                         .bold()
                         .foregroundColor(.white)
                     Spacer()
-//                    NavigationLink(destination: AddModel()) {
-//                        Image(systemName: "square.and.pencil")
-//                            .resizable()
-//                            .frame(width: 25, height: 25) 
-//                            .foregroundColor(.white)
-//                    }
+                    NavigationLink(destination: AddModel()){
+                        Image(systemName: "square.and.pencil")
+                            .resizable()
+                            .frame(width: 25, height: 25) 
+                            .foregroundColor(Color("CorBotao"))
+                    }
                 }
-
                 ForEach(exercicios, id: \.self) { exercicio in
                     Text("• \(exercicio)")
                         .foregroundColor(.white)
                         .font(.title3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
                 Spacer()
             }
             .padding()
         }
-        .navigationTitle("Detalhes")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Detalhes do Treino")
     }
 }

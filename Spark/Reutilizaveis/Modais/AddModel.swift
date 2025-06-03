@@ -88,6 +88,7 @@ struct AddModel: View {
             .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: { showAlertInfo = false }) } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela.") }
         }
         .accentColor(corBotaoPrincipal)
+        .navigationBarBackButtonHidden(true)
     }
 
     @ViewBuilder

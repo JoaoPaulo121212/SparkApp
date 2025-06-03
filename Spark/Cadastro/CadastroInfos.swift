@@ -2,18 +2,21 @@ import SwiftUI
 
 struct CadastroInfos: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
+    
     @State private var nome = ""
     @State private var idadeTexto = ""
     @State private var pesoTexto = ""
     @State private var alturaTexto = ""
     @State private var deveNavegar = false
+    
     @AppStorage("cadastroConcluido") var cadastroConcluido = false
+    @AppStorage("objetivoSelecionado") private var objetivoSalvo: String = ""
 
-    // Add @AppStorage for each piece of user data
     @AppStorage("nomeUsuario") var storedNomeUsuario: String = ""
     @AppStorage("idadeUsuario") var storedIdadeUsuario: Int = 0
     @AppStorage("pesoUsuario") var storedPesoUsuario: Double = 0.0
-    @AppStorage("alturaUsuario") var storedAlturaUsuario: Int = 0 // Storing height in cm as Int
+    @AppStorage("alturaUsuario") var storedAlturaUsuario: Int = 0
 
     var idade: Int? {
         Int(idadeTexto)
@@ -23,19 +26,23 @@ struct CadastroInfos: View {
         Double(pesoTexto.replacingOccurrences(of: ",", with: "."))
     }
 
-    var altura: Double? { // Keep as Double? since input can be decimal
-        Double(alturaTexto.replacingOccurrences(of: ",", with: "."))
+    var altura: Int? {
+        Int(alturaTexto.replacingOccurrences(of: ",", with: ".").split(separator: ".")[0])
     }
 
     var podeConcluir: Bool {
-        !nome.isEmpty && idade != nil && peso != nil
+        !nome.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        idade != nil && idadeTexto.count <= 2 &&
+        peso != nil && !pesoTexto.isEmpty &&
+        (alturaTexto.isEmpty || (altura != nil && alturaTexto.count <= 3))
     }
 
     var body: some View {
         ZStack {
             Color("BackgroundColor")
                 .ignoresSafeArea()
-            VStack {
+            
+            VStack(spacing: 15) {
                 HStack {
                     Button(action: {
                         dismiss()
@@ -44,56 +51,77 @@ struct CadastroInfos: View {
                             .foregroundColor(Color(red: 233/255, green: 9/255, blue: 22/255))
                             .font(.system(size: 23, weight: .bold))
                     }
-                    ProgressBarCadastro(currentTela: 2)
-
+                    ProgressBarCadastro(currentTela: 3)
                 }
                 .padding(.horizontal)
-                ScrollView {
-                    CamposCadastroView(nome: $nome, idadeTexto: $idadeTexto, pesoTexto: $pesoTexto, alturaTexto: $alturaTexto)
-                    Spacer()
-                    BotaoConcluirCadastro(podeConcluir: podeConcluir) {
-                        if idade == nil || peso == nil || (!alturaTexto.isEmpty && altura == nil) {
-                        } else {
-                            // Store the data when "Concluir" is pressed
-                            storedNomeUsuario = nome
-                            storedIdadeUsuario = idade ?? 0
-                            storedPesoUsuario = peso ?? 0.0
-                            // Convert altura (Double?) to Int for storedAlturaUsuario (Int)
-                            storedAlturaUsuario = Int(altura ?? 0.0)
+                // .padding(.top)
 
-                            print("Cadastro Concluído!")
-                            print("Nome: \(nome)")
-                            print("Idade: \(idade ?? -1)")
-                            print("Peso: \(peso ?? -1)")
-                            print("Altura : \(altura ?? -1)")
-                            cadastroConcluido = true
-                            deveNavegar = true
+                ScrollView {
+
+                    CamposCadastroView(nome: $nome, idadeTexto: $idadeTexto, pesoTexto: $pesoTexto, alturaTexto: $alturaTexto)
+                    Spacer(minLength: 30)
+                    
+                    BotaoConcluirCadastro(podeConcluir: podeConcluir) {
+                        storedNomeUsuario = nome.trimmingCharacters(in: .whitespacesAndNewlines)
+                        storedIdadeUsuario = idade ?? 0
+                        storedPesoUsuario = peso ?? 0.0
+                        storedAlturaUsuario = altura ?? 0
+
+                        print("Dados do usuário salvos em @AppStorage.")
+                        print("Nome: \(storedNomeUsuario)")
+                        print("Idade: \(storedIdadeUsuario)")
+                        print("Peso: \(storedPesoUsuario)")
+                        print("Altura: \(storedAlturaUsuario)")
+                        
+                        if !objetivoSalvo.isEmpty {
+                            print("Configurando treinos iniciais para o objetivo: \(objetivoSalvo)")
+                            gerenciadorSessoes.configurarTreinosIniciaisParaUsuario(objetivoDoUsuario: objetivoSalvo)
+                        } else {
+                            print("AVISO: Objetivo do usuário ('objetivoSalvo') está vazio. Treinos iniciais não serão configurados automaticamente.")
                         }
+
+                        print("Cadastro Concluído! Navegando para a tela principal.") //
+                        cadastroConcluido = true
+                        deveNavegar = true
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
                     .navigationDestination(isPresented: $deveNavegar) {
-                                    TabViewTeste()
-                                }
+                        TabViewTeste()
+                            .environmentObject(gerenciadorSessoes)
+                    }
                 }
                 .padding(.horizontal)
             }
         }
         .navigationBarBackButtonHidden(true)
-        .onChange(of: idadeTexto) {_, newValue in
-            if newValue.count > 2 {
-                idadeTexto = String(newValue.prefix(2))
+        .onChange(of: idadeTexto) { _, newValue in
+            let filtered = newValue.filter { "0123456789".contains($0) }
+            if filtered.count > 2 {
+                idadeTexto = String(filtered.prefix(2))
+            } else {
+                idadeTexto = filtered
             }
         }
-        .onChange(of: pesoTexto) {_, newValue in
-            if newValue.count > 4 {
-                pesoTexto = String(newValue.prefix(4))
+        .onChange(of: pesoTexto) { _, newValue in //
+            let filtered = newValue.filter { "0123456789,.".contains($0) }
+
+            if filtered.count > 5 {
+                pesoTexto = String(filtered.prefix(5))
+            } else {
+                pesoTexto = filtered
             }
         }
-        .onChange(of: alturaTexto) {_, newValue in
-            if newValue.count > 4 {
-                alturaTexto = String(newValue.prefix(4))
+        .onChange(of: alturaTexto) { _, newValue in
+            let filtered = newValue.filter { "0123456789".contains($0) }
+            if filtered.count > 3 {
+                alturaTexto = String(filtered.prefix(3))
+            } else {
+                alturaTexto = filtered
             }
+        }
+        .onAppear {
+
         }
     }
 }
@@ -116,6 +144,7 @@ struct TopBarCadastro: View {
         .padding(.top)
     }
 }
+
 struct CamposCadastroView: View {
     @Binding var nome: String
     @Binding var idadeTexto: String
@@ -124,16 +153,15 @@ struct CamposCadastroView: View {
 
     var body: some View {
         VStack {
-            Spacer()
             CampoCadastro(label: "Nome:", placeholder: "Ex: João da Silva", texto: $nome)
-            CampoCadastro(label: "Idade:", placeholder: "Ex: 25 anos", texto: $idadeTexto, keyboard: .numberPad)
-            CampoCadastro(label: "Peso (em Kg):", placeholder: "Ex: 70,0 Kg", texto: $pesoTexto, keyboard: .decimalPad)
-            CampoCadastro(label: "Altura (em cm):", placeholder: "Ex: 170 (Opcional)", texto: $alturaTexto, keyboard: .decimalPad)
+            CampoCadastro(label: "Idade:", placeholder: "Ex: 25", texto: $idadeTexto, keyboard: .numberPad)
+            CampoCadastro(label: "Peso (em Kg):", placeholder: "Ex: 70,5", texto: $pesoTexto, keyboard: .decimalPad)
+            CampoCadastro(label: "Altura (em cm):", placeholder: "Ex: 170 (Opcional)", texto: $alturaTexto, keyboard: .numberPad)
         }
         .padding(.top)
-        
     }
 }
+
 struct BotaoConcluirCadastro: View {
     var podeConcluir: Bool
     var action: () -> Void
@@ -148,34 +176,32 @@ struct BotaoConcluirCadastro: View {
                 .background(
                     podeConcluir
                     ? Color("CorOk")
-                    : Color("ColorCard")
+                    : Color("ColorCard").opacity(0.6)
                 )
                 .cornerRadius(12)
         }
         .disabled(!podeConcluir)
-        
     }
 }
+
 struct CampoCadastro: View {
     var label: String
     var placeholder: String
     @Binding var texto: String
     var keyboard: UIKeyboardType = .default
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)
                 .padding(.bottom,10)
                 .font(.headline)
                 .foregroundColor(.white)
-
             ZStack(alignment: .leading) {
                 if texto.isEmpty {
                     Text(placeholder)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.gray.opacity(0.7))
                         .padding(.leading, 14)
                 }
-
                 TextField("", text: $texto)
                     .foregroundColor(.white)
                     .padding()
@@ -183,12 +209,13 @@ struct CampoCadastro: View {
             }
             .background(Color("ColorCard"))
             .cornerRadius(12)
-            .padding(.bottom, 30)
+            .padding(.bottom, 20)
         }
     }
 }
-
 #Preview {
-    CadastroInfos()
-        .preferredColorScheme(.dark)
+    // Para o Preview, você precisa fornecer o EnvironmentObject
+    CadastroInfos() //
+        .environmentObject(GerenciadorSessoesViewModel()) // Adicionado
+        .preferredColorScheme(.dark) //
 }

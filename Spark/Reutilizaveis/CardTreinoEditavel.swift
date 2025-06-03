@@ -25,6 +25,7 @@ struct CardTreinoEditavel: View {
                 .cornerRadius(12)
             }
         }
+//        .navigationTitle("")
         .buttonStyle(PlainButtonStyle()) // remove animação padrão do botão
     }
 }

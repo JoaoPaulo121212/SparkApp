@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TempoCadastro: View {
+    @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
     @State private var tempoSelecionado: String = ""
     @State private var deveNavegar = false
     let opcoesTempo = ["Nunca treinei", "1 - 3 mês", "3 - 6 meses", "6m - 1 ano", "1 - 2 anos", "2+ anos"]
@@ -53,6 +54,8 @@ struct TempoCadastro: View {
                     Button(action: {
                         if !tempoSelecionado.isEmpty {
                             print("Selecionado: \(tempoSelecionado)")
+//                            @AppStorage("experienciaUsuario") var storedExperiencia: String = ""
+//                                storedExperiencia = tempoSelecionado
                             deveNavegar = true
                         }
                     }) {
@@ -73,6 +76,7 @@ struct TempoCadastro: View {
                     .padding(.bottom, 20)
                     .navigationDestination(isPresented: $deveNavegar) {
                                     CadastroObjetivo()
+                            .environmentObject(gerenciadorSessoes)
                                 }
             }
             .padding(.top)
@@ -82,5 +86,6 @@ struct TempoCadastro: View {
 }
 #Preview {
     TempoCadastro()
+        .environmentObject(GerenciadorSessoesViewModel())
         .preferredColorScheme(.dark)
 }

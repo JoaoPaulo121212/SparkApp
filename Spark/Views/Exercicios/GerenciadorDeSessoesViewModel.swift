@@ -48,9 +48,9 @@ class GerenciadorSessoesViewModel: ObservableObject {
         print("DEBUG: Sessões carregadas no init (verifique 'isModeloIntocado'):")
         sessoesDeTreinoSalvas.forEach { sessao in
             print("DEBUG: - Sessão: '\(sessao.nomeSessao)', ID: \(sessao.id), ModeloIntocado: \(String(describing: sessao.isModeloIntocado))")
-        atualizarSessoesParaExibir()
-                    print("DEBUG: GerenciadorSessoesViewModel inicializado. sessoesParaExibir calculada.")
         }
+        atualizarSessoesParaExibir()
+        print("DEBUG: GerenciadorSessoesViewModel inicializado. sessoesParaExibir calculada.") 
     }
     // MARK: - Lógica para Criação de Treinos Iniciais
     func atualizarSessoesParaExibir() {

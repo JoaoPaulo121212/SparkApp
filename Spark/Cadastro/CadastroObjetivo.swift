@@ -1,5 +1,6 @@
 import SwiftUI
 struct CadastroObjetivo: View {
+    @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
     @Environment(\.dismiss) var dismiss
     @State private var objetivoSelecionado: String = ""
     @State private var deveNavegar = false
@@ -88,6 +89,7 @@ struct CadastroObjetivo: View {
                     .padding(.bottom)
                     .navigationDestination(isPresented: $deveNavegar) {
                                     CadastroInfos()
+                            .environmentObject(gerenciadorSessoes)
                                 }
                 }
             }
@@ -97,5 +99,6 @@ struct CadastroObjetivo: View {
 
 #Preview {
     CadastroObjetivo()
+        .environmentObject(GerenciadorSessoesViewModel())
         .preferredColorScheme(.dark)
 }
