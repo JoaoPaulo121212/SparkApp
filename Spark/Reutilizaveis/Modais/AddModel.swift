@@ -85,7 +85,7 @@ struct AddModel: View {
                 }
             }
             .alert(feedbackAlertTitle, isPresented: $showFeedbackAlert) { Button("OK"){} } message: { Text(feedbackAlertMessage) }
-            .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: { showAlertInfo = false }) } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela.") }
+            .alert("Como funciona", isPresented: $showAlertInfo) { Button("Entendido", action: { showAlertInfo = false }) } message: { Text("Você pode criar novas sessões ao clicar no botão de + no canto superior direito da tela. Ao criar uma nova sessão ela substituirá seus treinos pré-criados.") }
         }
         .accentColor(corBotaoPrincipal)
         .navigationBarBackButtonHidden(true)

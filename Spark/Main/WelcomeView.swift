@@ -15,7 +15,7 @@ struct WelcomeView: View {
                     Text("Treine inteligente \nTreine com o Spark!")
                         .padding(.bottom)
                         .font(.title2)
-                        .fontWeight(.bold)
+//                        .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                         .frame(width: 350, height: 100)

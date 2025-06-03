@@ -95,6 +95,7 @@ struct CadastroInfos: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        
         .onChange(of: idadeTexto) { _, newValue in
             let filtered = newValue.filter { "0123456789".contains($0) }
             if filtered.count > 2 {
