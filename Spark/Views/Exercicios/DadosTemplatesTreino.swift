@@ -84,12 +84,12 @@ let dadosTemplates: [TemplatePlanoDeTreino] = [
             dataCriacao: Date()
             ),
             SessaoDeTreino(id: UUID(), nomeSessao: "Treino C – Costas e Bíceps (Hipertrofia)", exercicios: [
-                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Barra Fixa (Pegada Pronada)")!, series: parseSeries(fromString: "4xAMRAP", pesoPadrao: "Corpo", descansoPadrao: "90s")), // AMRAP = As Many Reps As Possible
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Barra Fixa (Pegada Pronada)")!, series: parseSeries(fromString: "4xAMRAP", pesoPadrao: "Corpo", descansoPadrao: "90s")),
                 ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Curvada com Barra")!, series: parseSeries(fromString: "4x8-10", pesoPadrao: "--", descansoPadrao: "75s")),
-                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Puxada Alta Frontal (Pulley)")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "75s")), // Ajustado
-                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Serrote com Halter (Unilateral)")!, series: parseSeries(fromString: "3x10", pesoPadrao: "--", descansoPadrao: "60s")), // Por lado
-                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Direta com Barra")!, series: parseSeries(fromString: "3x8-12", pesoPadrao: "--", descansoPadrao: "60s")), // Ajustado
-                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Alternada com Halteres")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")) // Por lado, ajustado
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Puxada Alta Frontal (Pulley)")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "75s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Remada Serrote com Halter (Unilateral)")!, series: parseSeries(fromString: "3x10", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Direta com Barra")!, series: parseSeries(fromString: "3x8-12", pesoPadrao: "--", descansoPadrao: "60s")),
+                ExercicioNaSessao(exercicioBase: encontrarExercicioLocal(nome: "Rosca Alternada com Halteres")!, series: parseSeries(fromString: "3x10-12", pesoPadrao: "--", descansoPadrao: "60s")) 
             ].compactMap { $0 },
             dataCriacao: Date()
             )

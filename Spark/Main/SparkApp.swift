@@ -13,8 +13,6 @@ struct SparkApp: App {
                 WelcomeView()
                     .environmentObject(gerenciadorSessoes)
             }
-//            WelcomeView()
-//                .environmentObject(gerenciadorSessoes)
         }
     }
 }

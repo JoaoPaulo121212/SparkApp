@@ -125,7 +125,7 @@ struct AddModel: View {
                 .padding(.horizontal)
             }
             List {
-                ForEach($exerciciosSessaoAtual) { $itemSessaoBinding in // Renomeado para clareza
+                ForEach($exerciciosSessaoAtual) { $itemSessaoBinding in 
                     ExercicioSessaoRowView(
                         itemSessao: $itemSessaoBinding,
                         corBotaoPrincipal: corBotaoPrincipal,

@@ -54,8 +54,6 @@ struct TempoCadastro: View {
                     Button(action: {
                         if !tempoSelecionado.isEmpty {
                             print("Selecionado: \(tempoSelecionado)")
-//                            @AppStorage("experienciaUsuario") var storedExperiencia: String = ""
-//                                storedExperiencia = tempoSelecionado
                             deveNavegar = true
                         }
                     }) {

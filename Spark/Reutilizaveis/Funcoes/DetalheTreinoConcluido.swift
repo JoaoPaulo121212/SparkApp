@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct DetalheTreinoConcluidoView: View {
-    let sessao: SessaoDeTreino // A sessão de treino concluída para exibir
+    let sessao: SessaoDeTreino
+    
     @Environment(\.dismiss) var dismiss
-    // Cores e constantes de UI podem ser herdadas ou definidas aqui
+
     let corDeFundoPrincipal = Color("BackgroundColor")
     let corTextoPrincipal = Color.white
     let corTextoSecundario = Color.gray
@@ -70,7 +71,6 @@ struct ExercicioDetalheView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(corTextoPrincipal)
 
-            // Cabeçalho das séries (opcional, mas útil)
             if !exercicioSessao.series.isEmpty {
                 HStack {
                     Text("SÉRIE").modifier(CabecalhoSerieStyleDetalhe())
@@ -107,10 +107,9 @@ struct ExercicioDetalheView: View {
     }
 }
 
-// Modificador de estilo para o cabeçalho das séries (similar ao que você pode ter em AddModel)
 struct CabecalhoSerieStyleDetalhe: ViewModifier {
     var alignment: Alignment = .leading
-    let corTextoCabecalho = Color.gray // Ou sua cor preferida
+    let corTextoCabecalho = Color.gray
 
     func body(content: Content) -> some View {
         content
@@ -120,12 +119,8 @@ struct CabecalhoSerieStyleDetalhe: ViewModifier {
             .frame(maxWidth: .infinity, alignment: alignment)
     }
 }
-
-// Preview
 #Preview {
-    // Para o Preview, você precisa criar uma SessaoDeTreino de exemplo
     let exercicioExemplo1 = ExercicioLocal(nome: "Agachamento Livre com Barra", grupoMuscular: "Pernas", musculoPrincipal: "Quadríceps", musculosSecundarios: ["Glúteos", "Coxas"], equipamento: "Barra", instrucoes: [""], observacoes: "", gifUrlLocal: "")
-//    let exercicioExemplo2 = ExercicioLocal(nome: "Leg Press 45°", grupoMuscular: "Pernas", musculoPrincipal: "Quadríceps")
 
     let seriesExemplo = [
         SerieDetalhe(numeroSerie: 1, reps: "10-12", peso: "50kg", descanso: "60s"),
@@ -138,12 +133,12 @@ struct CabecalhoSerieStyleDetalhe: ViewModifier {
         nomeSessao: "Pernas & Panturrilhas (GM)",
         exercicios: [
             ExercicioNaSessao(exercicioBase: exercicioExemplo1, series: seriesExemplo),
-//            ExercicioNaSessao(exercicioBase: exercicioExemplo2, series: seriesExemplo)
+
         ],
         dataCriacao: Date(),
         isModeloIntocado: false
     )
     DetalheTreinoConcluidoView(sessao: sessaoExemplo)
         .preferredColorScheme(.dark)
-        .environmentObject(GerenciadorSessoesViewModel()) // Se alguma subview precisar
+        .environmentObject(GerenciadorSessoesViewModel()) 
 }

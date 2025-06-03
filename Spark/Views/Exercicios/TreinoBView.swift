@@ -1,4 +1,3 @@
-// Arquivo: TreinoBView.swift
 import SwiftUI
 
 struct TreinoBView: View {
@@ -11,7 +10,7 @@ struct TreinoBView: View {
             VStack {
                 Text("Exercícios do Treino B")
                     .font(.title).foregroundColor(.white).padding()
-                // Adicione a lista de exercícios do Treino B aqui
+
                 Spacer()
                 Button("Concluir Treino B") {
                     concluirAcao()

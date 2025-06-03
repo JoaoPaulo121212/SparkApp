@@ -1,4 +1,5 @@
 import SwiftUI
+
 struct CadastroObjetivo: View {
     @EnvironmentObject var gerenciadorSessoes: GerenciadorSessoesViewModel
     @Environment(\.dismiss) var dismiss
@@ -30,9 +31,9 @@ struct CadastroObjetivo: View {
                         .font(.system(size: 27, weight: .bold))
                         .foregroundColor(.white)
                         .padding(.horizontal)
-                        .padding(.leading, -80)    // ou algum valor pequeno
-                        .padding(.trailing, 60)  // "empurra" o conteúdo para a esquerda
-                        .padding(.top, 30)       // move para baixo
+                        .padding(.leading, -80)
+                        .padding(.trailing, 60)
+                        .padding(.top, 30)
                     Spacer()
                     VStack(spacing: 16) {
                         ForEach(opcoesObjetivo, id: \.self) { opcao in

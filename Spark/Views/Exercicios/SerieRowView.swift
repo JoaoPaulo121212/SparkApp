@@ -9,7 +9,7 @@ struct SerieRowView: View {
         HStack(spacing: 8) {
             Text("\(serie.numeroSerie)")
                 .foregroundColor(corTextoPrincipal.opacity(0.9))
-                .modifier(CabecalhoSerieStyle(alignment: .center)) // CabecalhoSerieStyle.swift
+                .modifier(CabecalhoSerieStyle(alignment: .center)) 
 
             TextField("", text: $serie.peso,
                       prompt: Text(serie.peso.isEmpty || serie.peso == "--" ? "-- kg" : serie.peso)

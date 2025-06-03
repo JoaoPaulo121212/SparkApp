@@ -1,46 +1,42 @@
-// Arquivo: TreinoAView.swift
 import SwiftUI
 
 struct TreinoAView: View {
-    var concluirAcao: () -> Void // Ação recebida para marcar como concluído
+    var concluirAcao: () -> Void
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         ZStack {
-            Color("BackgroundColor").edgesIgnoringSafeArea(.all) // Sua cor de fundo
+            Color("BackgroundColor").edgesIgnoringSafeArea(.all) //
             VStack {
-                // Conteúdo do Treino A - Liste os exercícios aqui
                 Text("Exercícios do Treino A")
                     .font(.title).foregroundColor(.white)
                     .padding()
                 
-                // Exemplo de como listar exercícios (o senhor precisará de dados reais aqui)
                 List {
                     Text("Supino reto Máquina").foregroundColor(.white)
                     Text("Supino inclinado máquina").foregroundColor(.white)
                     Text("Cruxifico máquina").foregroundColor(.white)
-                    // Adicione mais exercícios
                 }
                 .listStyle(.plain)
                 .background(Color("BackgroundColor"))
-                .scrollContentBackground(.hidden) // Para iOS 16+
+                .scrollContentBackground(.hidden)
 
                 Spacer()
 
                 Button("Concluir Treino A") {
-                    concluirAcao() // Chama a ação passada pela TelaTreinos
-                    dismiss()      // Fecha esta view de treino
+                    concluirAcao()
+                    dismiss()
                 }
                 .font(.headline).padding()
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .background(Color("CorBotao")) // Sua cor de botão
+                .background(Color("CorBotao"))
                 .cornerRadius(10)
                 .padding()
             }
         }
         .navigationTitle("Treino A")
-        .navigationBarTitleDisplayMode(.inline) // Para um título menor
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

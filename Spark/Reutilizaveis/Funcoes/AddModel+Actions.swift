@@ -72,7 +72,7 @@ extension AddModel {
             exerciciosSessaoAtual[index].series.append(SerieDetalhe(numeroSerie: proximoNumeroSerie))
         }
     }
-    func excluirExercicioDaSessao(at offsets: IndexSet) { // Definição da função ausente
+    func excluirExercicioDaSessao(at offsets: IndexSet) { //Definição da função ausente
             exerciciosSessaoAtual.remove(atOffsets: offsets)
         }
     func excluirSerieDoExercicioPorSwipe(exercicioId: UUID, at offsets: IndexSet) {
