@@ -32,7 +32,7 @@ struct TelaPerfil: View {
     var body: some View {
         ZStack {
             corDeFundoPrincipal.ignoresSafeArea()
-            ScrollView {
+
                 VStack(alignment: .leading, spacing: 30) {
                     HStack(spacing: 20) {
                         if let data = profileImageData,
@@ -102,7 +102,7 @@ struct TelaPerfil: View {
                 carregarDadosDaSequencia()
             }
         }
-    }
+    
     
     func carregarDadosDaSequencia() {
         let infosDaSemanaViewModel = gerenciadorSessoes.obterDadosSemanaAtualParaPerfil()
