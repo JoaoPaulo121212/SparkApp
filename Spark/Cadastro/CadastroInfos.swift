@@ -65,12 +65,6 @@ struct CadastroInfos: View {
                         storedIdadeUsuario = idade ?? 0
                         storedPesoUsuario = peso ?? 0.0
                         storedAlturaUsuario = altura ?? 0
-
-                        print("Dados do usuário salvos em @AppStorage.")
-                        print("Nome: \(storedNomeUsuario)")
-                        print("Idade: \(storedIdadeUsuario)")
-                        print("Peso: \(storedPesoUsuario)")
-                        print("Altura: \(storedAlturaUsuario)")
                         
                         if !objetivoSalvo.isEmpty {
                             print("Configurando treinos iniciais para o objetivo: \(objetivoSalvo)")
